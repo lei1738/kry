@@ -45,24 +45,23 @@ def capture_packets(time):
 print(f"Selected Interface: {INTERFACE_NAME}\n")
 
 time = int(input("Enter the traffic capture time (in seconds, at least 20 sec): \n"))
-print(Unit.GB.value - 10)
 
 if time < 20:
     print("Time must be over 20 sec.\n")
 else:
     print(f"\nCapture time is: {time} seconds\n")
 
-    capture_size = capture_packets(time + 10)
+    capture_size = capture_packets(time)
 
-# Conevert to GB
+# Convert to GB
 if capture_size >= Unit.GB.value:
     capture_size = capture_size / Unit.GB.value
     print(f"Total Packet size captured is => {capture_size:.2f}GB")
-# Conevert to MB
+# Convert to MB
 elif capture_size >= Unit.MB.value:
     capture_size = capture_size / Unit.MB.value
     print(f"Total Packet size captured is => {capture_size:.2f}MB")
-# Conevert to KB
+# Convert to KB
 elif capture_size >= Unit.KB.value:
     capture_size = capture_size / Unit.KB.value
     print(f"Total Packet size captured is => {capture_size:.2f}KB")
