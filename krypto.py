@@ -38,7 +38,7 @@ def convert_size(capture_size):
         return (f"Total Packet size captured is => {final_size:.2f}B")
 
 
-def process_packtes(pcap_file):
+def process_packets(pcap_file):
     # Dictionary to store the count of occurrences for each protocol
     protocol_count = {}
 
@@ -88,5 +88,5 @@ if __name__ == "__main__":
 
     print(f"Total Packet count captured is => {packet_count}")
 
-    process_packtes('capture.pcapng')
+    process_packets('capture.pcapng')
 
