@@ -1,3 +1,4 @@
+import scapy.utils
 from scapy.all import *
 import pyshark
 import os
@@ -36,9 +37,38 @@ def convert_size(capture_size):
         final_size = capture_size / Unit.B.value
         return (f"Total Packet size captured is => {final_size:.2f}B")
 
+
+def process_packtes(pcap_file):
+    # Dictionary to store the count of occurrences for each protocol
+    protocol_count = {}
+
+    # Read the pcap file using Scapy
+    pcap_data = rdpcap(pcap_file)
+
+    # Extract sessions from the pcap data
+    sessions = pcap_data.sessions()
+
+    for session in sessions:
+        for packet in sessions[session]:
+            for i in range(len(packet.layers())):
+                layer = packet.getlayer(i)      # Get the current layer
+                protocol = layer.name       # Get the name of the protocol for the current layer
+                # Count the number of occurrences for each protocol
+                if protocol not in protocol_count:
+                    protocol_count[protocol] = 1
+                else:
+                    protocol_count[protocol] += 1
+
+    # Sort the dictionary in descending order based on the count of occurrences
+    protocol_count = dict(sorted(protocol_count.items(), key=lambda item: item[1], reverse=True))
+
+    # Print the output
+    for protocol in protocol_count:
+        print(f'{protocol_count[protocol]} packets have "{protocol}"')
+
 # Main
 if __name__ == "__main__":
-    INTERFACE_NAME = "Wi-Fi"
+    INTERFACE_NAME = "Ethernet"
     print(f"Selected Interface: {INTERFACE_NAME}\n")
 
     while True:
@@ -57,3 +87,6 @@ if __name__ == "__main__":
         packet_count += 1
 
     print(f"Total Packet count captured is => {packet_count}")
+
+    process_packtes('capture.pcapng')
+
