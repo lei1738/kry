@@ -38,6 +38,11 @@ def convert_size(capture_size):
         return (f"Total Packet size captured is => {final_size:.2f}B")
 
 
+def convert_pcap_to_csv(pcap_file):
+    cmd = "tshark -r " + pcap_file + " -T fields -e ip.src -e frame.len -e  ip.proto -E separator=, -E occurrence=f > traffic.csv"
+    os.system(cmd)
+    #tshark - r C:\Users\vasek\OneDrive\Plocha\programování\KRY - projekt\kry\capture.pcapng - T fields - e ip.src - e frame.len - e ip.proto - E separator =, -E occurrence = f > C:\Users\vasek\OneDrive\Plocha\programování\KRY - projekt\traffic.csv
+
 def process_packets(pcap_file):
     # Dictionary to store the count of occurrences for each protocol
     protocol_count = {}
@@ -68,7 +73,7 @@ def process_packets(pcap_file):
 
 # Main
 if __name__ == "__main__":
-    INTERFACE_NAME = "Ethernet"
+    INTERFACE_NAME = "Wifi"
     print(f"Selected Interface: {INTERFACE_NAME}\n")
 
     while True:
@@ -89,4 +94,5 @@ if __name__ == "__main__":
     print(f"Total Packet count captured is => {packet_count}")
 
     process_packets('capture.pcapng')
+    convert_pcap_to_csv('capture.pcapng')
 
