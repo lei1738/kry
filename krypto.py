@@ -39,9 +39,14 @@ def convert_size(capture_size):
 
 
 def convert_pcap_to_csv(pcap_file):
-    cmd = "tshark -r " + pcap_file + " -T fields -e ip.src -e frame.len -e  ip.proto -E separator=, -E occurrence=f > traffic.csv"
+    cmd = "tshark -r " + pcap_file + (" -T fields -e ip.version -e ip.hdr_len -e ip.tos -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
+                                      "-e ip.flags.mf -e ip.frag_offset -e ip.ttl -e ip.proto -e ip.checksum -e ip.src -e ip.dst -e ip.len "
+                                      "-e ip.dsfield -e tcp.srcport -e tcp.dstport -e tcp.seq -e tcp.ack -e tcp.len -e tcp.hdr_len -e tcp.flags "
+                                      "-e tcp.flags.fin -e tcp.flags.syn -e tcp.flags.reset -e tcp.flags.push -e tcp.flags.ack -e tcp.flags.urg "
+                                      "-e tcp.flags.cwr -e tcp.window_size -e tcp.checksum -e tcp.urgent_pointer -e tcp.options.mss_val  "
+                                      "-e frame.len  -E separator=, -E occurrence=f > traffic.csv")
     os.system(cmd)
-    #tshark - r C:\Users\vasek\OneDrive\Plocha\programování\KRY - projekt\kry\capture.pcapng - T fields - e ip.src - e frame.len - e ip.proto - E separator =, -E occurrence = f > C:\Users\vasek\OneDrive\Plocha\programování\KRY - projekt\traffic.csv
+    #tshark - r capture.pcapng - T fields - e ip.src - e frame.len - e ip.proto - E separator =, -E occurrence = f > traffic.csv
 
 def process_packets(pcap_file):
     # Dictionary to store the count of occurrences for each protocol
