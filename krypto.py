@@ -3,12 +3,33 @@ from scapy.all import *
 import pyshark
 import os
 from enum import Enum
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
 
 class Unit(Enum):
     GB = 1073741824
     MB = 1048576
     KB = 1024
     B = 1
+
+# define the model
+class PimaClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.hidden1 = nn.Linear(8, 12)
+        self.act1 = nn.ReLU()
+        self.hidden2 = nn.Linear(12, 8)
+        self.act2 = nn.ReLU()
+        self.output = nn.Linear(8, 1)
+        self.act_output = nn.Sigmoid()
+
+    def forward(self, x):
+        x = self.act1(self.hidden1(x))
+        x = self.act2(self.hidden2(x))
+        x = self.act_output(self.output(x))
+        return x
 
 # Functions
 def capture_packets(time):
@@ -39,14 +60,53 @@ def convert_size(capture_size):
 
 
 def convert_pcap_to_csv(pcap_file):
-    cmd = "tshark -r " + pcap_file + (" -T fields -e ip.version -e ip.hdr_len -e ip.tos -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
+    cmd = "tshark -r " + pcap_file + (" -T fields -e ip.version -e _ws.col.Protocol -e ip.hdr_len -e ip.tos -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
                                       "-e ip.flags.mf -e ip.frag_offset -e ip.ttl -e ip.proto -e ip.checksum -e ip.src -e ip.dst -e ip.len "
                                       "-e ip.dsfield -e tcp.srcport -e tcp.dstport -e tcp.seq -e tcp.ack -e tcp.len -e tcp.hdr_len -e tcp.flags "
                                       "-e tcp.flags.fin -e tcp.flags.syn -e tcp.flags.reset -e tcp.flags.push -e tcp.flags.ack -e tcp.flags.urg "
                                       "-e tcp.flags.cwr -e tcp.window_size -e tcp.checksum -e tcp.urgent_pointer -e tcp.options.mss_val  "
                                       "-e frame.len  -E separator=, -E occurrence=f > traffic.csv")
     os.system(cmd)
-    #tshark - r capture.pcapng - T fields - e ip.src - e frame.len - e ip.proto - E separator =, -E occurrence = f > traffic.csv
+
+def neuron(csv_file):
+    # load the dataset, split into input (X) and output (y) variables
+    dataset = np.loadtxt(csv_file, delimiter=',')
+    X = dataset[:, 0:8]
+    y = dataset[:, 8]
+
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.float32).reshape(-1, 1)
+
+    model = PimaClassifier()
+    print(model)
+
+    # train the model
+    loss_fn = nn.BCELoss()  # binary cross entropy
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+    n_epochs = 100
+    batch_size = 10
+
+    for epoch in range(n_epochs):
+        for i in range(0, len(X), batch_size):
+            Xbatch = X[i:i + batch_size]
+            y_pred = model(Xbatch)
+            ybatch = y[i:i + batch_size]
+            loss = loss_fn(y_pred, ybatch)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+    # compute accuracy
+    y_pred = model(X)
+    accuracy = (y_pred.round() == y).float().mean()
+    print(f"Accuracy {accuracy}")
+
+    # make class predictions with the model
+    predictions = (model(X) > 0.5).int()
+    for i in range(5):
+        print('%s => %d (expected %d)' % (X[i].tolist(), predictions[i], y[i]))
+
 
 def process_packets(pcap_file):
     # Dictionary to store the count of occurrences for each protocol
@@ -78,7 +138,7 @@ def process_packets(pcap_file):
 
 # Main
 if __name__ == "__main__":
-    INTERFACE_NAME = "Wifi"
+    INTERFACE_NAME = "Wi-Fi"
     print(f"Selected Interface: {INTERFACE_NAME}\n")
 
     while True:
@@ -100,4 +160,6 @@ if __name__ == "__main__":
 
     process_packets('capture.pcapng')
     convert_pcap_to_csv('capture.pcapng')
+
+    neuron("traffic.csv")
 
