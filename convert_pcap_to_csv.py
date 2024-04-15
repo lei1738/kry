@@ -58,6 +58,3 @@ if __name__ == '__main__':
         csv = filename + '.csv'
         filename = 'VNAT_release_1\\' + filename
         convert_pcap_to_csv(filename, csv)
-
-    new_values = [0]*5
-    print(new_values)
