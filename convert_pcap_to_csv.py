@@ -34,14 +34,18 @@ def convert_pcap_to_csv(pcap_file, csv_name):
     os.system(cmd)
 
 
-def addColumn(csv_name):
+def addColumnForVPN(csv_name):
     df = pd.read_csv(csv_name)
     thislist = len(df['ip.version'].tolist())
+    new_values = [1]*thislist
+    df['encrypted'] = new_values
 
-    new_values = []
-    for i in range(thislist):
-        new_values.append(random.randint(0, 1)) #nebude random
+    df.to_csv(csv_name, index=False)
 
+def addColumnForNonVPN(csv_name):
+    df = pd.read_csv(csv_name)
+    thislist = len(df['ip.version'].tolist())
+    new_values = [0]*thislist
     df['encrypted'] = new_values
 
     df.to_csv(csv_name, index=False)
@@ -54,3 +58,6 @@ if __name__ == '__main__':
         csv = filename + '.csv'
         filename = 'VNAT_release_1\\' + filename
         convert_pcap_to_csv(filename, csv)
+
+    new_values = [0]*5
+    print(new_values)
