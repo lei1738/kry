@@ -79,7 +79,14 @@ def convert_pcap_to_csv(pcap_file):
                                       "-e tls.ssl2.handshake.cipherspec -e sip.auth -e sip.auth.algorithm -e sip.Geolocation "
                                       "-e sip.MIME-Version -e sip.Via.transport -e sip.Via.ttl -e ssh.host_key.type -e ssh.host_sig.type "
                                       "-e ssh.packet_length -e ssh.protocol -e dhcp.hops -e dhcp.type -e dhcpv6.auth.algorithm "
-                                      "-e dhcpv6.auth.protocol -e dhcpv6.hopcount -E separator=, -E occurrence=f > traffic.csv")
+                                      "-e dhcpv6.auth.protocol -e dhcpv6.hopcount -e rdp.action -e rdp.bVersion -e rdp.bandwidth.headerlen "
+                                      "-e rdp.bandwidth.reqtype -e rdp.bandwidth.resptype -e rdp.bandwidth.typeid -e rdp.client.address "
+                                      "-e rdp.connectionType -e rdp.domain -e rdp.encryptionLevel -e rdp.encryptionMethod -e rdp.entrySize "
+                                      "-e rdp.fastpath.eventheader -e rdp.header.length -e rdp.header.type -e rdp.heartbeat.period "
+                                      "-e rdp.length -e rdp.negReq.selectedProtocol -e rdp.rdstls.version -e rdp.networkcharacteristics.averagertt "
+                                      "-e rdp.targetUser -e rdp.totalLength -e rsync.hdr_magic -e rsync.hdr_version -e sftp.length -e sftp.name_count "
+                                      "-e sftp.packet_length -e sftp.packet_type -e sftp.status -e sftp.version -e rtp.block-length -e rtp.hdr_ext "
+                                      "-e rtp.p_type -e rtp.version -E header=y -E separator=, -E occurrence=f  > traffic.csv")
     os.system(cmd)
 
 def neuron(csv_file):
