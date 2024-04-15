@@ -1,4 +1,6 @@
 import os
+import pandas as pd
+import random
 
 def convert_pcap_to_csv(pcap_file, csv_name):
     cmd = "tshark -r " + pcap_file + (" -T fields -e frame.time_relative -e frame.len -e frame.protocols -e frame.len -e ip.version "
@@ -20,9 +22,21 @@ def convert_pcap_to_csv(pcap_file, csv_name):
                                       "-e tls.ssl2.handshake.cipherspec -e sip.auth -e sip.auth.algorithm -e sip.Geolocation "
                                       "-e sip.MIME-Version -e sip.Via.transport -e sip.Via.ttl -e ssh.host_key.type -e ssh.host_sig.type "
                                       "-e ssh.packet_length -e ssh.protocol -e dhcp.hops -e dhcp.type -e dhcpv6.auth.algorithm "
-                                      "-e dhcpv6.auth.protocol -e dhcpv6.hopcount -E separator=, -E occurrence=f > csv\\" + csv_name)
+                                      "-e dhcpv6.auth.protocol -e dhcpv6.hopcount -E header=y -E separator=, -E occurrence=f > csv\\" + csv_name)
     os.system(cmd)
 
+
+def addColumn(csv_name):
+    df = pd.read_csv(csv_name)
+    thislist = len(df['ip.version'].tolist())
+
+    new_values = []
+    for i in range(thislist):
+        new_values.append(random.randint(0, 1)) #nebude random
+
+    df['encrypted'] = new_values
+
+    df.to_csv(csv_name, index=False)
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
