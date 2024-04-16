@@ -1,9 +1,19 @@
 from tkinter import filedialog
 import customtkinter
+import psutil
+import os
+import pyshark
+import sys
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
+
 filepath = ""
+file_content = ""
+run_state = 0  # 0=Locked, 1=Loaded, 2=Record
+interfaces = []
+time_start = 5
+time_end = 60
 
 
 def open_input_dialog_event():
@@ -12,59 +22,196 @@ def open_input_dialog_event():
 
 
 class App(customtkinter.CTk):
+
+    # ======================
+    #      FUNCTIONS
+    # ======================
+    def change_appearance_mode_event(self, new_appearance_mode: str):
+        customtkinter.set_appearance_mode(new_appearance_mode)
+
+    def change_scaling_event(self, new_scaling: str):
+        new_scaling_float = int(new_scaling.replace("%", "")) / 100
+        customtkinter.set_widget_scaling(new_scaling_float)
+
+    def path_formatted(self, path):
+        path_parts = path.split("/")
+        file_name = path_parts[-1]
+        return file_name
+
+    def update_entry_state(self):
+        global filepath
+        if filepath != '':
+            self.load_entry.configure(state="normal")
+            index = len(self.load_entry.get())
+            self.load_entry.delete(0, index)
+            self.load_entry.insert(0, self.path_formatted(filepath))
+            self.load_entry.configure(state="readonly")
+
+
+
+    def open_file(self, path):
+        try:
+            with open(path, "rb") as file:
+                file_content = file.read()
+            return file_content
+        except FileNotFoundError:
+            print(f"Soubor {path} nebyl nalezen.")
+            return None
+        except Exception as e:
+            print(f"Chyba při čtení souboru: {e}")
+            return None
+
+    def get_root_folder(self):
+        program_path = sys.argv[0]
+        root_directory = os.path.dirname(program_path)
+        return root_directory
+
+    def save_file(self, file_content, file_path):
+        with open(file_path, 'wb') as f:
+            f.write(file_content)
+
+    def load_file(self):
+        global filepath
+        global file_content
+        global run_state
+        new_filepath = filedialog.askopenfilename()
+        print("Selected file: ", new_filepath)
+        file_name, file_extension = os.path.splitext(new_filepath)
+        if file_extension.lower() == ".pcap" or file_extension.lower() == ".pcapng":
+            filepath = new_filepath
+            file_content = self.open_file(filepath)
+            self.update_entry_state()
+            self.run_button.configure(state="enabled")
+            self.run_button.configure(text="Run from Loaded")
+            run_state = 1
+        else:
+            print("Wrong file type!")
+
+    def capture_packets(self, interface_name, run_time):
+        """Capture packets from the specified interface for the given time duration."""
+        file_name = "capture.pcapng"
+        capture = pyshark.LiveCapture(interface=interface_name, output_file=file_name)
+        capture.set_debug()
+        capture.sniff(timeout=run_time)
+        capture_size = os.path.getsize(file_name)
+        print("uspesne zachyceno")
+        captured_file = self.open_file(self.get_root_folder() + "\\" + file_name)
+        print("uspesne otevreno")
+        return capture_size, captured_file
+
+    def record_file(self):
+        global run_state, file_content
+        # TODO: dodelat funkci
+        interface_name = self.interface_combobox.get()
+        run_time = self.time_slider.get() # float
+        capture_size, file_content = self.capture_packets(interface_name, run_time)
+
+
+
+
+
+
+        self.run_button.configure(state="enabled")
+        self.run_button.configure(text="Run from Recorded")
+        run_state = 2
+
+    def on_run(self):
+        if run_state == 1 or run_state == 2: # load & record
+            global file_content
+            pcap_file = file_content
+            self.save_file(pcap_file,'C:\\Users\\fisar\\Downloads\\test.pcap')
+        else: return
+
+    def get_interfaces(self):
+        interfaces = psutil.net_if_addrs()
+        inters = []
+        for interface_name, addresses in interfaces.items():
+            inters.append(interface_name)
+        return inters
+
+    def get_slider(self, value):
+        self.time_label.configure(text=(str(value) + " s"))
+
     def __init__(self):
         super().__init__()
 
-        # configure window
+        # ======================
+        #    configure window
+        # ======================
         self.title("Encrypted Traffic Analysis")
         self.geometry(f"{1200}x{800}")
+        global time_start
+        global time_end
+        global interfaces
+        interfaces = self.get_interfaces()
 
-        # configure grid layout (4x4)
+        # ======================
+        #    configure grid layout (4x4)
+        # ======================
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
         self.grid_rowconfigure((0, 1, 2), weight=1)
 
-        # create sidebar frame with widgets - CONFIG
+        # ======================
+        #    CONFIG - sidebar
+        # ======================
         self.sidebar_frame = customtkinter.CTkFrame(self, width=140, corner_radius=0)
         self.sidebar_frame.grid(row=0, column=0, rowspan=6, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(6, weight=1)
+        self.sidebar_frame.grid_rowconfigure(7, weight=1)
 
         self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Encrypted Traffic Analysis",
                                                  font=customtkinter.CTkFont(size=20, weight="bold"))
         self.logo_label.grid(row=0, column=0, padx=20, pady=(20, 10))
 
+        # LOAD
         self.load_button = customtkinter.CTkButton(self.sidebar_frame, text="Load Traffic", command=self.load_file)
         self.load_button.grid(row=1, column=0, padx=20, pady=10)
 
         self.load_entry = customtkinter.CTkEntry(self.sidebar_frame, placeholder_text="Loaded File")
         self.load_entry.grid(row=2, column=0, padx=20, pady=10)
 
+        # RECORD
         self.record_button = customtkinter.CTkButton(self.sidebar_frame, text="Record Traffic",
-                                                     command=self.sidebar_button_event)
+                                                     command=self.record_file)
         self.record_button.grid(row=3, column=0, padx=20, pady=10)
 
-        self.interface_entry = customtkinter.CTkEntry(self.sidebar_frame, placeholder_text="interface")
-        self.interface_entry.grid(row=4, column=0, padx=20, pady=10)
-        self.interface_entry.bind("<KeyRelease>", lambda event: self.update_button_state())
+        self.interface_combobox = customtkinter.CTkComboBox(self.sidebar_frame,
+                                                            values=interfaces, state="readonly")
+        self.interface_combobox.grid(row=4, column=0, padx=20, pady=(10, 10))
 
-        self.time_entry = customtkinter.CTkEntry(self.sidebar_frame, placeholder_text="time [s]")
-        self.time_entry.grid(row=5, column=0, padx=20, pady=10)
-        self.time_entry.bind("<KeyRelease>", lambda event: self.update_button_state())
+        self.time_slider = customtkinter.CTkSlider(self.sidebar_frame, from_=time_start, to=time_end,
+                                                   number_of_steps=time_end - time_start, command=self.get_slider)
 
+        self.time_slider.grid(row=5, column=0, padx=20, pady=10)
+        self.time_label = customtkinter.CTkLabel(self.sidebar_frame, text=f"{time_start} s")
+        self.time_label.grid(row=6, column=0, padx=20, pady=10)
+
+        # ======================
+        #    main run button
+        # ======================
+        #TODO:neni highlight!
+        self.run_button = customtkinter.CTkButton(self.sidebar_frame, text="Run", command=self.on_run)
+        self.run_button.grid(row=7, column=0, padx=20, pady=10)
+
+        # ======================
+        #      APPEARANCE
+        # ======================
         self.appearance_mode_label = customtkinter.CTkLabel(self.sidebar_frame, text="Appearance Mode:", anchor="w")
-        self.appearance_mode_label.grid(row=7, column=0, padx=20, pady=(10, 0))
+        self.appearance_mode_label.grid(row=9, column=0, padx=20, pady=(10, 0))
         self.appearance_mode_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                        values=["Light", "Dark", "System"],
                                                                        command=self.change_appearance_mode_event)
-        self.appearance_mode_optionemenu.grid(row=8, column=0, padx=20, pady=(10, 10))
+        self.appearance_mode_optionemenu.grid(row=10, column=0, padx=20, pady=(10, 10))
         self.scaling_label = customtkinter.CTkLabel(self.sidebar_frame, text="UI Scaling:", anchor="w")
-        self.scaling_label.grid(row=9, column=0, padx=20, pady=(10, 0))
+        self.scaling_label.grid(row=11, column=0, padx=20, pady=(10, 0))
         self.scaling_optionemenu = customtkinter.CTkOptionMenu(self.sidebar_frame,
                                                                values=["80%", "90%", "100%", "110%", "120%"],
                                                                command=self.change_scaling_event)
-        self.scaling_optionemenu.grid(row=10, column=0, padx=20, pady=(10, 20))
+        self.scaling_optionemenu.grid(row=12, column=0, padx=20, pady=(10, 20))
 
-        # create textbox - DESCRIPTION
+        # ======================
+        #      DESCRIPTION
+        # ======================
         self.describtion_label = customtkinter.CTkLabel(self, text="Description", anchor="w",
                                                         font=customtkinter.CTkFont(size=15, weight="bold"))
         self.describtion_label.grid(row=0, column=1, padx=20, pady=(20, 10))
@@ -72,7 +219,9 @@ class App(customtkinter.CTk):
         self.description_textbox = customtkinter.CTkTextbox(self, width=250, height=100)
         self.description_textbox.grid(row=1, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
-        # create tabview - STATISTICS
+        # ======================
+        #    STATISTICS
+        # ======================
         self.statistics_label = customtkinter.CTkLabel(self, text="Statistics", anchor="w",
                                                        font=customtkinter.CTkFont(size=15, weight="bold"))
         self.statistics_label.grid(row=2, column=1, padx=20, pady=(20, 10))
@@ -90,34 +239,36 @@ class App(customtkinter.CTk):
         self.statistics_tableview.tab("Packet Size")
         self.statistics_tableview.tab("Source/Destination")
 
-        self.percentage_label = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
-                                                       text="Percentage of VPN packets:")
-        self.percentage_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.percentage_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
+                                                        text="Percentage of VPN packets:")
+        self.percentage_label1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.percentage_entry = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="readonly")
-        self.percentage_entry.grid(row=0, column=1, padx=20, pady=(20, 10))
+        self.percentage_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="readonly")
+        self.percentage_entry1.grid(row=0, column=1, padx=20, pady=(20, 10))
 
-        self.number_of_packets_label = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
-                                                              text="Number of all packets:")
-        self.number_of_packets_label.grid(row=1, column=0, padx=20, pady=(20, 10))
+        self.number_of_packets_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
+                                                               text="Number of all packets:")
+        self.number_of_packets_label1.grid(row=1, column=0, padx=20, pady=(20, 10))
 
-        self.number_of_packets_entry = customtkinter.CTkEntry(self.statistics_tableview.tab("General"),
-                                                              state="readonly")
-        self.number_of_packets_entry.grid(row=1, column=1, padx=20, pady=(20, 10))
+        self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"),
+                                                               state="readonly")
+        self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
-        self.protocols_textbox = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=700,
-                                                          height=150)
-        self.protocols_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=700,
+                                                           height=150)
+        self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.packet_size_textbox = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packet Size"), width=700,
-                                                            height=150)
-        self.packet_size_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packet Size"), width=700,
+                                                             height=150)
+        self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.src_dst_textbox = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=700,
-                                                        height=150)
-        self.src_dst_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=700,
+                                                         height=150)
+        self.src_dst_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        # create tabview - IRREGULARITY
+        # ======================
+        #      IRREGULARITY
+        # ======================
         self.irregularity_label = customtkinter.CTkLabel(self, text="Irregularity", anchor="w",
                                                          font=customtkinter.CTkFont(size=15, weight="bold"))
         self.irregularity_label.grid(row=4, column=1, padx=20, pady=(20, 10))
@@ -135,37 +286,41 @@ class App(customtkinter.CTk):
         self.irregularity_tableview.tab("Packet Size")
         self.irregularity_tableview.tab("Source/Destination")
 
-        self.percentage_label = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
-                                                       text="Percentage of VPN packets:")
-        self.percentage_label.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.percentage_label2 = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
+                                                        text="Percentage of VPN packets:")
+        self.percentage_label2.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.percentage_entry = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"), state="readonly")
-        self.percentage_entry.grid(row=0, column=1, padx=20, pady=(20, 10))
+        self.percentage_entry2 = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"), state="readonly")
+        self.percentage_entry2.grid(row=0, column=1, padx=20, pady=(20, 10))
 
-        self.number_of_packets_label = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
-                                                              text="Number of all packets:")
-        self.number_of_packets_label.grid(row=1, column=0, padx=20, pady=(20, 10))
+        self.number_of_packets_label2 = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
+                                                               text="Number of all packets:")
+        self.number_of_packets_label2.grid(row=1, column=0, padx=20, pady=(20, 10))
 
-        self.number_of_packets_entry = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"),
-                                                              state="readonly")
-        self.number_of_packets_entry.grid(row=1, column=1, padx=20, pady=(20, 10))
+        self.number_of_packets_entry2 = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"),
+                                                               state="readonly")
+        self.number_of_packets_entry2.grid(row=1, column=1, padx=20, pady=(20, 10))
 
-        self.protocols_textbox = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Protocols"), width=700,
-                                                          height=150)
-        self.protocols_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.protocols_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Protocols"), width=700,
+                                                           height=150)
+        self.protocols_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.packet_size_textbox = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Packet Size"), width=700,
-                                                            height=150)
-        self.packet_size_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.packet_size_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Packet Size"), width=700,
+                                                             height=150)
+        self.packet_size_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.src_dst_textbox = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Source/Destination"),
-                                                        width=700,
-                                                        height=150)
-        self.src_dst_textbox.grid(row=0, column=0, padx=20, pady=(20, 10))
+        self.src_dst_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Source/Destination"),
+                                                         width=700,
+                                                         height=150)
+        self.src_dst_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        # set default values
+        # ======================
+        #   set default values
+        # ======================
         self.load_entry.configure(state="readonly")
-        self.record_button.configure(state="disabled")
+        self.time_slider.set(time_start)
+        self.interface_combobox.set("Ethernet")
+        self.run_button.configure(state="disabled")
         self.appearance_mode_optionemenu.set("System")
         self.scaling_optionemenu.set("100%")
         self.description_textbox.insert("0.0", "Design and program an application that will detect "
@@ -183,45 +338,13 @@ class App(customtkinter.CTk):
                                                "source/destination addresses, etc.). Simulate different "
                                                "network traffic scenarios and test the developed "
                                                "application on them.\n\n")
-        self.protocols_textbox.insert("0.0", "Protocols\n\n")
-        self.packet_size_textbox.insert("0.0", "Packet Size\n\n")
-        self.src_dst_textbox.insert("0.0", "Source/Destination\n\n")
-
-    def change_appearance_mode_event(self, new_appearance_mode: str):
-        customtkinter.set_appearance_mode(new_appearance_mode)
-
-    def change_scaling_event(self, new_scaling: str):
-        new_scaling_float = int(new_scaling.replace("%", "")) / 100
-        customtkinter.set_widget_scaling(new_scaling_float)
-
-    def sidebar_button_event(self):
-        print("sidebar_button click")
-
-    def path_formatted(self, path):
-        path_parts = path.split("/")
-        file_name = path_parts[-1]
-        return file_name
-
-    def update_button_state(self):
-        if (self.interface_entry.get()) == "" or (self.time_entry.get()) == "":
-            self.record_button.configure(state="disabled")
-        else:
-            self.record_button.configure(state="normal")
-
-    def update_entry_state(self):
-        global filepath
-        if filepath != '':
-            self.load_entry.configure(state="normal")
-            index = len(self.load_entry.get())
-            self.load_entry.delete(0, index)
-            self.load_entry.insert(0, self.path_formatted(filepath))
-            self.load_entry.configure(state="readonly")
-
-    def load_file(self):
-        global filepath
-        filepath = filedialog.askopenfilename()
-        print("Selected file: ", filepath)
-        self.update_entry_state()
+        self.description_textbox.configure(state="disabled")
+        self.protocols_textbox1.insert("0.0", "Protocols\n\n")
+        self.packet_size_textbox1.insert("0.0", "Packet Size\n\n")
+        self.src_dst_textbox1.insert("0.0", "Source/Destination\n\n")
+        self.protocols_textbox2.insert("0.0", "Protocols\n\n")
+        self.packet_size_textbox2.insert("0.0", "Packet Size\n\n")
+        self.src_dst_textbox2.insert("0.0", "Source/Destination\n\n")
 
 
 if __name__ == "__main__":
