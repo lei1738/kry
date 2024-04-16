@@ -3,6 +3,32 @@ import pandas as pd
 import random
 
 # !!! SMAZAT POSKOZENE SOUBORY NONVPN_SCP_LONG_CAPTURE1 A VPN_SKYPE_CHAT_CAPTURE6 !!!
+def merge():
+    '''directory = 'csv'
+    df_csv_concat = pd.concat([pd.read_csv("C:\\Users\\vasek\\OneDrive\\Plocha\\programování\\KRY-projekt\\kry\\csv\\nonvpn_rdp_capture_5pcap.csv")], ignore_index=True)
+    #print(df_csv_concat)
+    for file in os.listdir(directory)[1:5]:
+        print(file)
+        df_csv_concat = df_csv_concat + pd.concat([pd.read_csv("csv\\"+file)], ignore_index=True)
+    df_csv_concat.to_csv("big2.csv", index=False)'''
+
+    CHUNK_SIZE = 50000
+    csv_file_list = os.listdir(directory)
+    output_file = "output.csv"
+
+    first_one = True
+    for csv_file_name in csv_file_list:
+
+        if not first_one: # if it is not the first csv file then skip the header row (row 0) of that file
+            skip_row = [0]
+        else:
+            skip_row = []
+
+        chunk_container = pd.read_csv('csv\\' + csv_file_name, chunksize=CHUNK_SIZE, skiprows = skip_row)
+        for chunk in chunk_container:
+            chunk.to_csv(output_file, mode="a", index=False)
+        first_one = False
+
 def convert_pcap_to_csv(pcap_file, csv_name):
     cmd = "tshark -r " + pcap_file + (" -T fields -e frame.time_relative -e frame.len -e frame.protocols -e frame.len -e ip.version "
                                       "-e _ws.col.Protocol -e ip.hdr_len -e ip.tos -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
@@ -54,9 +80,16 @@ def addColumnForNonVPN(csv_name):
 if __name__ == '__main__':
     directory = 'csv'
     #csv = ''
-    for filename in os.listdir(directory):
+    '''for filename in os.listdir(directory):
         #csv = filename + '.csv'
         file = 'csv\\' + filename
         print(file)
         #convert_pcap_to_csv(filename, csv)
-        addColumnForNonVPN(file)
+        addColumnForNonVPN(file)'''
+    #merge()
+
+    directory = 'csv'
+    for filename in os.listdir(directory):
+        x = "C:\Users\leida\PycharmProjects\kry\csv" + filename
+        y = "C:\Users\leida\PycharmProjects\kry\csv" + filename.replace(".", "", 1)
+        os.rename(x, y)
