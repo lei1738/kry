@@ -36,7 +36,7 @@ def convert_pcap_to_csv(pcap_file, csv_name):
 
 def addColumnForVPN(csv_name):
     df = pd.read_csv(csv_name)
-    thislist = len(df['ip.version'].tolist())
+    thislist = len(df['frame.time_relative'].tolist())
     new_values = [1]*thislist
     df['encrypted'] = new_values
 
@@ -44,7 +44,7 @@ def addColumnForVPN(csv_name):
 
 def addColumnForNonVPN(csv_name):
     df = pd.read_csv(csv_name)
-    thislist = len(df['ip.version'].tolist())
+    thislist = len(df['frame.time_relative'].tolist())
     new_values = [0]*thislist
     df['encrypted'] = new_values
 
@@ -52,9 +52,11 @@ def addColumnForNonVPN(csv_name):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    directory = 'VNAT_release_1'
-    csv = ''
+    directory = 'csv'
+    #csv = ''
     for filename in os.listdir(directory):
-        csv = filename + '.csv'
-        filename = 'VNAT_release_1\\' + filename
-        convert_pcap_to_csv(filename, csv)
+        #csv = filename + '.csv'
+        file = 'csv\\' + filename
+        print(file)
+        #convert_pcap_to_csv(filename, csv)
+        addColumnForNonVPN(file)
