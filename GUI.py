@@ -57,7 +57,7 @@ class App(customtkinter.CTk):
 
     def update_entry_state(self):
         """
-        Updates the state and content of the load entry widget.
+        Updates the state and content of the load entry widget after inserting path to a file.
         """
         global filepath
         if filepath != '':
@@ -168,12 +168,12 @@ class App(customtkinter.CTk):
 
     def on_run(self):
         """
-        Performs an action based on the current run state.
+        Performs an action based on the selected traffic (loaded/recorded).
         """
         if run_state == 1 or run_state == 2:  # load & record
             global file_content
             pcap_file = file_content
-            #TODO:zmenit
+            #TODO: dodelat a prepsat i dokumentaci
             self.save_file(pcap_file, 'C:\\Users\\fisar\\Downloads\\test.pcap')
         else:
             return
@@ -193,12 +193,13 @@ class App(customtkinter.CTk):
 
     def get_slider(self, value):
         """
-        Updates the time label text with the specified value.
+        Updates the time label text with the specified value from the slider.
 
         Args:
             value (int): The value to display on the label.
         """
         self.time_label.configure(text=(str(value) + " s"))
+
 
     def __init__(self):
         super().__init__()
