@@ -4,6 +4,7 @@ import psutil
 import os
 import pyshark
 import sys
+import pydoc
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
@@ -16,29 +17,48 @@ time_start = 5
 time_end = 60
 
 
-def open_input_dialog_event():
-    dialog = customtkinter.CTkInputDialog(text="Type in a number:", title="CTkInputDialog")
-    print("CTkInputDialog:", dialog.get_input())
-
-
 class App(customtkinter.CTk):
 
     # ======================
     #      FUNCTIONS
     # ======================
     def change_appearance_mode_event(self, new_appearance_mode: str):
+        """
+        Change the appearance mode of the application.
+
+        Args:
+            new_appearance_mode (str): The new appearance mode to set.
+        """
         customtkinter.set_appearance_mode(new_appearance_mode)
 
     def change_scaling_event(self, new_scaling: str):
+        """
+        Change the scaling of widgets in the application.
+
+        Args:
+            new_scaling (str): The new scaling percentage to set.
+        """
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
 
     def path_formatted(self, path):
+        """
+        Extracts the file name from a given path.
+
+        Args:
+            path (str): The path from which to extract the file name.
+
+        Returns:
+            str: The extracted file name.
+        """
         path_parts = path.split("/")
         file_name = path_parts[-1]
         return file_name
 
     def update_entry_state(self):
+        """
+        Updates the state and content of the load entry widget.
+        """
         global filepath
         if filepath != '':
             self.load_entry.configure(state="normal")
@@ -47,30 +67,55 @@ class App(customtkinter.CTk):
             self.load_entry.insert(0, self.path_formatted(filepath))
             self.load_entry.configure(state="readonly")
 
-
-
     def open_file(self, path):
+        """
+        Opens and reads the content of a file.
+
+        Args:
+            path (str): The path of the file to be opened and read.
+
+        Returns:
+            bytes: The content of the file as a byte string.
+                None if the file is not found or an error occurs.
+        """
         try:
             with open(path, "rb") as file:
                 file_content = file.read()
             return file_content
         except FileNotFoundError:
-            print(f"Soubor {path} nebyl nalezen.")
+            print(f"File {path} not found.")
             return None
         except Exception as e:
-            print(f"Chyba při čtení souboru: {e}")
+            print(f"Error occurs while reading the file: {e}")
             return None
 
     def get_root_folder(self):
+        """
+        Gets the root directory of the program.
+
+        Returns:
+            str: The root directory path.
+        """
         program_path = sys.argv[0]
         root_directory = os.path.dirname(program_path)
         return root_directory
 
     def save_file(self, file_content, file_path):
+        """
+        Saves content to a file.
+
+        Args:
+            file_content (bytes): The content to be saved.
+            file_path (str): The path where the content will be saved.
+        """
         with open(file_path, 'wb') as f:
             f.write(file_content)
 
     def load_file(self):
+        """
+        Loads a file, updates the GUI Run button state, and prepares for running.
+
+        """
         global filepath
         global file_content
         global run_state
@@ -81,48 +126,65 @@ class App(customtkinter.CTk):
             filepath = new_filepath
             file_content = self.open_file(filepath)
             self.update_entry_state()
-            self.run_button.configure(state="enabled")
-            self.run_button.configure(text="Run from Loaded")
+            self.run_button.configure(state="normal")
+            self.run_button.configure(text="Run Loaded")
             run_state = 1
         else:
             print("Wrong file type!")
 
     def capture_packets(self, interface_name, run_time):
-        """Capture packets from the specified interface for the given time duration."""
+        """
+        Capture packets from the specified interface for the given time duration.
+
+        Args:
+            interface_name (str): The name of the interface to capture packets from.
+            run_time (float): The duration of the capture in seconds.
+
+        Returns:
+            tuple: A tuple containing the size of the captured file and its content.
+        """
         file_name = "capture.pcapng"
         capture = pyshark.LiveCapture(interface=interface_name, output_file=file_name)
         capture.set_debug()
         capture.sniff(timeout=run_time)
         capture_size = os.path.getsize(file_name)
-        print("uspesne zachyceno")
+        print("successfully captured")
         captured_file = self.open_file(self.get_root_folder() + "\\" + file_name)
-        print("uspesne otevreno")
+        print("successfully opened")
         return capture_size, captured_file
 
     def record_file(self):
+        """
+        Records packets from the specified interface for a given time duration.
+        """
         global run_state, file_content
         # TODO: dodelat funkci
         interface_name = self.interface_combobox.get()
-        run_time = self.time_slider.get() # float
+        run_time = self.time_slider.get()  # float
         capture_size, file_content = self.capture_packets(interface_name, run_time)
-
-
-
-
-
-
-        self.run_button.configure(state="enabled")
-        self.run_button.configure(text="Run from Recorded")
+        self.run_button.configure(state="normal")
+        self.run_button.configure(text="Run Recorded")
         run_state = 2
 
     def on_run(self):
-        if run_state == 1 or run_state == 2: # load & record
+        """
+        Performs an action based on the current run state.
+        """
+        if run_state == 1 or run_state == 2:  # load & record
             global file_content
             pcap_file = file_content
-            self.save_file(pcap_file,'C:\\Users\\fisar\\Downloads\\test.pcap')
-        else: return
+            #TODO:zmenit
+            self.save_file(pcap_file, 'C:\\Users\\fisar\\Downloads\\test.pcap')
+        else:
+            return
 
     def get_interfaces(self):
+        """
+        Retrieves a list of available network interfaces.
+
+        Returns:
+            list: A list of interface names.
+        """
         interfaces = psutil.net_if_addrs()
         inters = []
         for interface_name, addresses in interfaces.items():
@@ -130,6 +192,12 @@ class App(customtkinter.CTk):
         return inters
 
     def get_slider(self, value):
+        """
+        Updates the time label text with the specified value.
+
+        Args:
+            value (int): The value to display on the label.
+        """
         self.time_label.configure(text=(str(value) + " s"))
 
     def __init__(self):
@@ -189,7 +257,6 @@ class App(customtkinter.CTk):
         # ======================
         #    main run button
         # ======================
-        #TODO:neni highlight!
         self.run_button = customtkinter.CTkButton(self.sidebar_frame, text="Run", command=self.on_run)
         self.run_button.grid(row=7, column=0, padx=20, pady=10)
 
@@ -346,7 +413,10 @@ class App(customtkinter.CTk):
         self.packet_size_textbox2.insert("0.0", "Packet Size\n\n")
         self.src_dst_textbox2.insert("0.0", "Source/Destination\n\n")
 
-
 if __name__ == "__main__":
+    #pydoc.writedoc('GUI')
     app = App()
     app.mainloop()
+
+
+
