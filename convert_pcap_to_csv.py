@@ -12,14 +12,22 @@ def deli(csv_name):
 
 def hash_string_values(csv_name):
     df = pd.read_csv(csv_name)
-    df.pop("icmp.type")
-    biglist = ["frame.protocols", "_ws.col.protocol", "ip.id", "ip.flags", "ip.flags.rb", "ip.flags.df", "ip.flags.mf", "ip.checksum",
-               "ip.src", "ip.dst", "ipv6.src", "ipv6.dst", "tcp.flags", "tcp.flags.fin", "tcp.flags.syn", "tcp.flags.reset",
-               "tcp.flags.push", "tcp.flags.ack", "tcp.flags.urg", "tcp.flags.cwr", "tcp.checksum", "dns.flags", "dns.flags.recdesired",
-               "dns.flags.recavail", "dns.flags.authenticated", "dns.qry.class", "dns.resp.class", "http.connection", "http.request.method",
-               "http.request.version", "http.request.uri", "http.response.version", "http.user_agent", "tls.handshake.version",
+    biglist = ["frame.protocols", "_ws.col.protocol", "ip.id", "ip.flags", "ip.flags.rb", "ip.flags.df", "ip.flags.mf",
+               "ip.checksum",
+               "ip.src", "ip.dst", "ipv6.src", "ipv6.dst", "tcp.flags", "tcp.flags.fin", "tcp.flags.syn",
+               "tcp.flags.reset",
+               "tcp.flags.push", "tcp.flags.ack", "tcp.flags.urg", "tcp.flags.cwr", "tcp.checksum", "dns.flags",
+               "dns.flags.recdesired",
+               "dns.flags.recavail", "dns.flags.authenticated", "dns.qry.class", "dns.resp.class", "http.connection",
+               "http.request.method",
+               "http.request.version", "http.request.uri", "http.response.version", "http.user_agent",
+               "tls.handshake.version",
                "ssh.host_key.type", "ssh.host_sig.type", "ssh.protocol", "rdp.negReq.selectedProtocol", "data"]
-    for l in biglist:
+    finallist = []
+    for col in df.columns:
+        finallist.append(col)
+    s = set(finallist) - set(biglist)
+    for l in list(s):
         thislist = df[l].tolist()
         new_values = [hash(hodnota) for hodnota in thislist]
         df[l] = new_values
@@ -38,7 +46,7 @@ def merge():
 
     CHUNK_SIZE = 50000
     csv_file_list = os.listdir(directory)
-    output_file = "final_output.csv"
+    output_file = "output_neuron.csv"
 
     first_one = True
     for csv_file_name in csv_file_list:
@@ -97,7 +105,7 @@ if __name__ == '__main__':
         #convert_pcap_to_csv(file, csv)
         #addColumnForVPN(file)
         deli(file)'''
-    merge()
+    #merge()
 
     #list random
     # listNum = random.sample(range(1,157), 156)
@@ -124,8 +132,9 @@ if __name__ == '__main__':
         z = "csv\\" + filename[3:]
         os.rename(x, z)'''
     '''for filename in os.listdir(directory):
-        df = pd.read_csv('csv\\' + filename)
+        #df = pd.read_csv('csv\\' + filename)
         print(filename)
-        #hash_string_values('csv\\' + filename)
-        df.fillna(0, inplace=True)
-        df.to_csv('csv' + filename, index=False)'''
+        hash_string_values('csv\\' + filename)
+        #df.fillna(0, inplace=True)
+        #df.to_csv('csv' + filename, index=False)'''
+

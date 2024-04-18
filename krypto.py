@@ -1,3 +1,4 @@
+import pandas as pd
 import scapy.utils
 from scapy.all import *
 import pyshark
@@ -5,6 +6,7 @@ import os
 from enum import Enum
 import convert_pcap_to_csv
 import neuron
+import neuron2
 
 class Unit(Enum):
     GB = 1073741824
@@ -13,6 +15,10 @@ class Unit(Enum):
     B = 1
 
 # Functions
+def removeheader(csv_name):
+    df = pd.read_csv(csv_name)
+    print("Delka: "+str(len(df.columns)))
+    #df.to_csv("final_output.csv",header=None, index=False)
 def capture_packets(time):
     """Capture packets from the specified interface for the given time duration."""
     file_name = "capture.pcapng"
@@ -102,7 +108,7 @@ def process_packets(pcap_file):
 # Main
 if __name__ == "__main__":
     INTERFACE_NAME = "WiFi"
-    print(f"Selected Interface: {INTERFACE_NAME}\n")
+    '''print(f"Selected Interface: {INTERFACE_NAME}\n")
 
     while True:
         time = int(input("Enter the traffic capture time (in seconds, at least 20 sec): \n"))
@@ -124,5 +130,8 @@ if __name__ == "__main__":
     process_packets('capture.pcapng')
     convert_pcap_to_csv('capture.pcapng')
 
-    neuron.neuronka("traffic.csv") #volani z jinyho souboru
+    neuron.neuronka("traffic.csv") #volani z jinyho souboru'''
+
+    #removeheader('csv\\1nonvpn_skype-chat_capture21pcap.csv')
+    neuron2.neuronka('output_neuron.csv')
 

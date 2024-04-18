@@ -8,11 +8,11 @@ import numpy as np
 class PimaClassifier(nn.Module):
     def __init__(self):
         super().__init__()
-        self.hidden1 = nn.Linear(8, 12)
+        self.hidden1 = nn.Linear(64, 12)
         self.act1 = nn.ReLU()
-        self.hidden2 = nn.Linear(12, 8)
+        self.hidden2 = nn.Linear(12, 64)
         self.act2 = nn.ReLU()
-        self.output = nn.Linear(8, 1)
+        self.output = nn.Linear(64, 1)
         self.act_output = nn.Sigmoid()
 
     def forward(self, x):
@@ -25,10 +25,10 @@ class PimaClassifier(nn.Module):
 def neuronka(csv_file):
     # load the dataset, split into input (X) and output (y) variables
     dataset = np.loadtxt(csv_file, delimiter=',')
-    X = dataset[:, 0:2]
-    y = dataset[:, 2]
+    X = dataset[:, 0:64]
+    y = dataset[:, 64]
 
-    X = torch.tensor(X, dtype=torch.float32)
+    X = torch.tensor(X, dtype=torch.float32) #max 32b cisla
     y = torch.tensor(y, dtype=torch.float32).reshape(-1, 1)
 
     model = PimaClassifier()
@@ -57,6 +57,7 @@ def neuronka(csv_file):
     print(f"Accuracy {accuracy}")
 
     # make class predictions with the model
+
     predictions = (model(X) > 0.5).int()
     for i in range(5):
         print('%s => %d (expected %d)' % (X[i].tolist(), predictions[i], y[i]))
