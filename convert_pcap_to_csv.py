@@ -1,18 +1,21 @@
 import os
 import pandas as pd
 import random
+from sklearn.utils import shuffle
 
-# !!! SMAZAT POSKOZENE SOUBORY NONVPN_SCP_LONG_CAPTURE1 A VPN_SKYPE_CHAT_CAPTURE6 !!!
+def return_df(csv_name):
+    df = pd.read_csv(csv_name)
+    df = shuffle(df)
+    df.to_csv('shuffle_neuron_output.csv', chunksize=50000)
 
 def deli(csv_name):
     df = pd.read_csv(csv_name)
-    df.pop("raw")
-    df.pop("text")
-    df.to_csv(csv_name, index=False)
+    df.pop("Unnamed: 0")
+    df.to_csv(csv_name, index=False, chunksize=50000)
 
 def hash_string_values(csv_name):
     df = pd.read_csv(csv_name)
-    biglist = ["frame.protocols", "_ws.col.protocol", "ip.id", "ip.flags", "ip.flags.rb", "ip.flags.df", "ip.flags.mf",
+    '''biglist = ["frame.protocols", "_ws.col.protocol", "ip.id", "ip.flags", "ip.flags.rb", "ip.flags.df", "ip.flags.mf",
                "ip.checksum",
                "ip.src", "ip.dst", "ipv6.src", "ipv6.dst", "tcp.flags", "tcp.flags.fin", "tcp.flags.syn",
                "tcp.flags.reset",
@@ -26,13 +29,13 @@ def hash_string_values(csv_name):
     finallist = []
     for col in df.columns:
         finallist.append(col)
-    s = set(finallist) - set(biglist)
-    for l in list(s):
+    s = set(finallist) - set(biglist)'''
+    for l in list(df.columns):
         thislist = df[l].tolist()
         new_values = [hash(hodnota) for hodnota in thislist]
         df[l] = new_values
-
-    df.to_csv(csv_name, index=False)
+    print(len(df.columns))
+    df.to_csv('1'+csv_name, index=False)
 
 
 def merge():
@@ -74,7 +77,7 @@ def convert_pcap_to_csv(pcap_file, csv_name):
                                       "-e http.request.method -e http.request.version -e http.request.uri -e http.response.version "
                                       "-e http.response.code -e http.user_agent -e tls.handshake -e tls.handshake.type -e tls.handshake.version "
                                       "-e tls.handshake.ciphersuites -e ssh.host_key.type -e ssh.host_sig.type -e ssh.packet_length -e ssh.protocol "
-                                      "-e dhcp.hops -e dhcp.type -e rdp.negReq.selectedProtocol -e raw -e data -e text -E header=y -E separator=, -E occurrence=f > csv\\" + csv_name)
+                                      "-e dhcp.hops -e dhcp.type -e rdp.negReq.selectedProtocol -e data -E header=y -E separator=, -E occurrence=f > csv\\" + csv_name)
     os.system(cmd)
 
 
@@ -138,3 +141,6 @@ if __name__ == '__main__':
         #df.fillna(0, inplace=True)
         #df.to_csv('csv' + filename, index=False)'''
 
+    #return_df('output_neuron.csv')
+    #hash_string_values('vpn_ssh_capture1pcap.csv')
+    deli('shuffle_neuron_output.csv')

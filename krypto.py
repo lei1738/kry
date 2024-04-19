@@ -6,7 +6,7 @@ import os
 from enum import Enum
 import convert_pcap_to_csv
 import neuron
-import neuron2
+import neuron3
 
 class Unit(Enum):
     GB = 1073741824
@@ -133,5 +133,6 @@ if __name__ == "__main__":
     neuron.neuronka("traffic.csv") #volani z jinyho souboru'''
 
     #removeheader('csv\\1nonvpn_skype-chat_capture21pcap.csv')
-    neuron2.neuronka('output_neuron.csv')
+    #neuron3.neuronka('shuffle_neuron_output.csv')
+    neuron3.vyhodnoceni('1vpn_ssh_capture1pcap.csv')
 
