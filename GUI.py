@@ -84,38 +84,75 @@ class App(customtkinter.CTk):
         self.run_button.configure(text="Analyze Recorded")
         RUN_STATE = 2
 
-    def write_protocols(self, protocols_count):
-        protocols = list(protocols_count.items())
+    def write_table_protocols(self, protocols_count):
+        """
+        Writes the protocols and their occurrences to a textbox.
 
-        print_protocols = ""
+        Args:
+            protocols_count (dict): A dictionary containing the count of occurrences of each protocol.
+
+        Returns:
+            None
+        """
+        protocols = list(protocols_count.items())
         protocols_table = tabulate(protocols, headers=["Protocol", "Occurrence"], tablefmt="plain",
                                    numalign="right")
-        # for protocol, count in protocols_count.items():
-        # protocols_table.add_row([format_str(protocol), format_str(count)])
-
-        # self.protocols_textbox1.insert("0.0", protocol_table)
         print(protocols_table)
-
         self.protocols_textbox1.delete("0.0", "end")
         self.protocols_textbox1.insert("0.0", protocols_table)
+
+    def write_table_packet_size(self, packet_sizes):
+        packets_table = tabulate(packet_sizes, headers=["Packet size", "Occurrence"], tablefmt="plain",
+                                 numalign="right")
+        print(packets_table)
+        self.packet_size_textbox1.delete("0.0", "end")
+        self.packet_size_textbox1.insert("0.0", packets_table)
+
+    def write_table_src_dst(self, src_dst):
+        src_dst_table = tabulate(src_dst, headers=["Src & Dst", "Occurrence"], tablefmt="plain", numalign="right")
+        print(src_dst_table)
+        self.packet_size_textbox1.delete("0.0", "end")
+        self.packet_size_textbox1.insert("0.0", src_dst_table)
+
+    def statistics(self):
+        # percentage of vpn packets
+        percentage_of_packets_encrypted = number_of_encrypted_packets / number_of_packets * 100
+        self.percentage_entry1.configure(state="normal")
+        self.percentage_entry1.insert(0, f"{percentage_of_packets_encrypted:.2f}%")
+        self.percentage_entry1.configure(state="disabled")
+
+        # num of all vpn packets
+        packet_counter = number_of_encrypted_packets(CSV_RELATIVE_FILEPATH)
+        self.number_of_packets_entry1.configure(state="normal")
+        self.number_of_packets_entry1.delete(0, "end")
+        self.number_of_packets_entry1.insert(0, str(packet_counter))
+        self.number_of_packets_entry1.configure(state="disabled")
+
+        # protocols + count
+        protocols_count = count_protocols(CSV_RELATIVE_FILEPATH)
+        self.write_table_protocols(protocols_count)
+
+        # encrypted packets size + count
+        packet_size = encrypted_packet_size(CSV_RELATIVE_FILEPATH)
+        self.write_table_packet_size(packet_size)
+
+        # src/dst + count
+        src_dst = src_dst_encrypted_packets(CSV_RELATIVE_FILEPATH)
+        print(src_dst)
 
     def analyze(self):
         """
         Performs an action based on the selected traffic (loaded/recorded).
         """
+        # TODO: prepsat i dokumentaci
+        global FILE_CONTENT
         if RUN_STATE == 1 or RUN_STATE == 2:  # load & record
-            global FILE_CONTENT
             pcap_file = FILE_CONTENT
-            # TODO: dodelat a prepsat i dokumentaci
             save_file(pcap_file, get_root_folder() + '\\' + PCAP_RELATIVE_FILEPATH)
             convert_pcap_to_csv1(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
-            protocols_count = count_protocols(CSV_RELATIVE_FILEPATH)
-            self.write_protocols(protocols_count)
-            packet_counter = number_of_encrypted_packets(CSV_RELATIVE_FILEPATH)
-            self.number_of_packets_entry1.configure(state="normal")
-            self.number_of_packets_entry1.delete(0, "end")
-            self.number_of_packets_entry1.insert(0, str(packet_counter))
-            self.number_of_packets_entry1.configure(state="disabled")
+            # TODO: neuronka
+
+            self.statistics()  # naplnění statistic
 
         else:
             return
@@ -131,15 +168,15 @@ class App(customtkinter.CTk):
 
     def __init__(self):
         super().__init__()
+        global TIME_START
+        global TIME_END
+        global INTERFACES
 
         # ======================
         #    configure window
         # ======================
         self.title("Encrypted Traffic Analysis")
         self.geometry(f"{1200}x{800}")
-        global TIME_START
-        global TIME_END
-        global INTERFACES
         INTERFACES = get_interfaces()
 
         # ======================
@@ -246,7 +283,8 @@ class App(customtkinter.CTk):
                                                                text="Number of all VPN packets:")
         self.number_of_packets_label1.grid(row=1, column=0, padx=20, pady=(20, 10))
 
-        self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="disabled")
+        self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"),
+                                                               state="disabled")
         self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
         self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=700,
@@ -293,7 +331,7 @@ class App(customtkinter.CTk):
         self.number_of_packets_label2.grid(row=1, column=0, padx=20, pady=(20, 10))
 
         self.number_of_packets_entry2 = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"),
-                                                            state="disabled")
+                                                               state="disabled")
         self.number_of_packets_entry2.grid(row=1, column=1, padx=20, pady=(20, 10))
 
         self.protocols_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Protocols"), width=700,

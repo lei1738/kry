@@ -270,3 +270,24 @@ def unique_with_count(input_list):
     unique_list = [[list(item), counts[item]] for item in set(input_list_tuples)]
 
     return unique_list
+
+
+def encrypted_packet_size(csv_path):
+    packet_sizes = []
+
+    # Open the .csv file for reading
+    with open(csv_path, 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+
+        for row in reader:
+            # Check if the last value in the row is equal to 1
+            if row[-1] == '1':
+                # Increment the count
+                size = row[15]
+
+                packet_sizes1 = [size]
+                packet_sizes.append(packet_sizes1)
+
+        packet_sizes_final = unique_with_count(packet_sizes)
+
+    return packet_sizes_final
