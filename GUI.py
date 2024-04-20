@@ -271,7 +271,7 @@ class App(customtkinter.CTk):
                                                        font=customtkinter.CTkFont(size=15, weight="bold"))
         self.statistics_label.grid(row=2, column=1, padx=20, pady=(20, 10))
 
-        self.statistics_tableview = customtkinter.CTkTabview(self, width=250)
+        self.statistics_tableview = customtkinter.CTkTabview(self, width=250, height=550)
         self.statistics_tableview.grid(row=3, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.statistics_tableview.add("General")
@@ -285,79 +285,43 @@ class App(customtkinter.CTk):
         self.statistics_tableview.tab("Source/Destination")
 
         self.percentage_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
-                                                        text="Percentage of VPN packets:")
+                                                        text="Percentage of encrypted packets:")
         self.percentage_label1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.percentage_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="readonly")
         self.percentage_entry1.grid(row=0, column=1, padx=20, pady=(20, 10))
 
         self.number_of_packets_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
-                                                               text="Number of all VPN packets:")
+                                                               text="Number of all encrypted packets:")
         self.number_of_packets_label1.grid(row=1, column=0, padx=20, pady=(20, 10))
 
         self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"),
                                                                state="readonly")
         self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
-        self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=700,
-                                                           height=150, state="disabled")
+        self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=750,
+                                                           height=450, state="disabled")
         self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=700,
-                                                             height=150, state="disabled")
+        self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=750,
+                                                             height=450, state="disabled")
         self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=700,
-                                                         height=150, state="disabled")
+        self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=750,
+                                                         height=450, state="disabled")
         self.src_dst_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # ======================
         #      COULD BE ENCRYPTED
         # ======================
-        self.irregularity_label = customtkinter.CTkLabel(self, text="Could be encrypted", anchor="w",
-                                                         font=customtkinter.CTkFont(size=15, weight="bold"))
-        self.irregularity_label.grid(row=4, column=1, padx=20, pady=(20, 10))
+        #self.irregularity_label = customtkinter.CTkLabel(self, text="Could be encrypted", anchor="w",
+                                                         #font=customtkinter.CTkFont(size=15, weight="bold"))
+        #self.irregularity_label.grid(row=4, column=1, padx=20, pady=(20, 10))
 
-        self.irregularity_tableview = customtkinter.CTkTabview(self, width=250)
-        self.irregularity_tableview.grid(row=5, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
+        #self.irregularity_tableview = customtkinter.CTkTabview(self, width=250)
+        #self.irregularity_tableview.grid(row=5, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
-        self.irregularity_tableview.add("General")
-        self.irregularity_tableview.add("Protocols")
-        self.irregularity_tableview.add("Packet Size")
-        self.irregularity_tableview.add("Source/Destination")
 
-        self.irregularity_tableview.tab("General").grid_rowconfigure(2)
-        self.irregularity_tableview.tab("Protocols")
-        self.irregularity_tableview.tab("Packet Size")
-        self.irregularity_tableview.tab("Source/Destination")
-
-        self.percentage_label2 = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
-                                                        text="Percentage of VPN packets:")
-        self.percentage_label2.grid(row=0, column=0, padx=20, pady=(20, 10))
-
-        self.percentage_entry2 = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"), state="disabled")
-        self.percentage_entry2.grid(row=0, column=1, padx=20, pady=(20, 10))
-
-        self.number_of_packets_label2 = customtkinter.CTkLabel(self.irregularity_tableview.tab("General"),
-                                                               text="Number of all packets:")
-        self.number_of_packets_label2.grid(row=1, column=0, padx=20, pady=(20, 10))
-
-        self.number_of_packets_entry2 = customtkinter.CTkEntry(self.irregularity_tableview.tab("General"),
-                                                               state="disabled")
-        self.number_of_packets_entry2.grid(row=1, column=1, padx=20, pady=(20, 10))
-
-        self.protocols_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Protocols"), width=700,
-                                                           height=150)
-        self.protocols_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
-
-        self.packet_size_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Packet Size"), width=700,
-                                                             height=150)
-        self.packet_size_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
-
-        self.src_dst_textbox2 = customtkinter.CTkTextbox(self.irregularity_tableview.tab("Source/Destination"),
-                                                         width=700,
-                                                         height=150)
-        self.src_dst_textbox2.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # ======================
         #   set default values

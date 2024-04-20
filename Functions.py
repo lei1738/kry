@@ -215,6 +215,8 @@ def src_dst_encrypted_packets(csv_path):
             if row[-1] == '1':
                 # Increment the count
                 if row[13] == '' and row[14] == '':
+                    if row[16] == '' and row[17] == '':
+                        continue
                     src = row[16]
                     dst = row[17]
                 else:
