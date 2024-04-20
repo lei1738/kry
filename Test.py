@@ -1,6 +1,7 @@
 from tabulate import tabulate
 
 from Functions import *
+
 CSV_RELATIVE_FILEPATH = 'temp\\' + 'temp.csv'
 
 
@@ -8,9 +9,11 @@ def write_table_packet_size(packet_sizes):
     packets_table = tabulate(packet_sizes, headers=["Packet size", "Occurrence"], tablefmt="plain", numalign="right")
     print(packets_table)
 
+
 def write_table_src_dst(src_dst):
     src_dst_table = tabulate(src_dst, headers=["Src", "Dst", "Occurrence"], tablefmt="plain", numalign="right")
     print(src_dst_table)
+
 
 if __name__ == "__main__":
     protocols_count = count_protocols(CSV_RELATIVE_FILEPATH)

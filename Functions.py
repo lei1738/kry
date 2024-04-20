@@ -1,8 +1,10 @@
 import os
 import sys
+from collections import Counter
+
 import psutil
 import pyshark
-from collections import Counter
+
 import csv
 
 
@@ -291,3 +293,9 @@ def encrypted_packet_size(csv_path):
         packet_sizes_final = unique_with_count(packet_sizes)
 
     return packet_sizes_final
+
+
+#TODO: implemntace "mohlo by byt sifrovano" - dle protokolu?
+def could_be_encrypted(csv_path):
+    pass
+

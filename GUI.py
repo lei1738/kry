@@ -98,21 +98,27 @@ class App(customtkinter.CTk):
         protocols_table = tabulate(protocols, headers=["Protocol", "Occurrence"], tablefmt="plain",
                                    numalign="right")
         print(protocols_table)
+        self.protocols_textbox1.configure(state="normal")
         self.protocols_textbox1.delete("0.0", "end")
         self.protocols_textbox1.insert("0.0", protocols_table)
+        self.protocols_textbox1.configure(state="disabled")
 
     def write_table_packet_size(self, packet_sizes):
         packets_table = tabulate(packet_sizes, headers=["Packet size", "Occurrence"], tablefmt="plain",
                                  numalign="right")
         print(packets_table)
+        self.packet_size_textbox1.configure(state="normal")
         self.packet_size_textbox1.delete("0.0", "end")
         self.packet_size_textbox1.insert("0.0", packets_table)
+        self.packet_size_textbox1.configure(state="disabled")
 
     def write_table_src_dst(self, src_dst):
         src_dst_table = tabulate(src_dst, headers=["Src & Dst", "Occurrence"], tablefmt="plain", numalign="right")
         print(src_dst_table)
-        self.packet_size_textbox1.delete("0.0", "end")
-        self.packet_size_textbox1.insert("0.0", src_dst_table)
+        self.src_dst_textbox1.configure(state="normal")
+        self.src_dst_textbox1.delete("0.0", "end")
+        self.src_dst_textbox1.insert("0.0", src_dst_table)
+        self.src_dst_textbox1.configure(state="disabled")
 
     def statistics(self):
         # percentage of vpn packets
@@ -201,7 +207,7 @@ class App(customtkinter.CTk):
         self.load_button = customtkinter.CTkButton(self.sidebar_frame, text="Load Traffic", command=self.load_pcap)
         self.load_button.grid(row=1, column=0, padx=20, pady=10)
 
-        self.load_entry = customtkinter.CTkEntry(self.sidebar_frame, placeholder_text="Loaded File", state="disabled")
+        self.load_entry = customtkinter.CTkEntry(self.sidebar_frame, placeholder_text="Loaded File", state="readonly")
         self.load_entry.grid(row=2, column=0, padx=20, pady=10)
 
         # RECORD
@@ -223,7 +229,7 @@ class App(customtkinter.CTk):
         # ======================
         #    main run button
         # ======================
-        self.run_button = customtkinter.CTkButton(self.sidebar_frame, text="Analyze", command=self.analyze)
+        self.run_button = customtkinter.CTkButton(self.sidebar_frame, text="Analyze", state="disabled", command=self.analyze)
         self.run_button.grid(row=7, column=0, padx=20, pady=10)
 
         # ======================
@@ -276,7 +282,7 @@ class App(customtkinter.CTk):
                                                         text="Percentage of VPN packets:")
         self.percentage_label1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.percentage_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="disabled")
+        self.percentage_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="readonly")
         self.percentage_entry1.grid(row=0, column=1, padx=20, pady=(20, 10))
 
         self.number_of_packets_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
@@ -284,25 +290,25 @@ class App(customtkinter.CTk):
         self.number_of_packets_label1.grid(row=1, column=0, padx=20, pady=(20, 10))
 
         self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"),
-                                                               state="disabled")
+                                                               state="readonly")
         self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
         self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=700,
-                                                           height=150)
+                                                           height=150, state="disabled")
         self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=700,
-                                                             height=150)
+                                                             height=150, state="disabled")
         self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=700,
-                                                         height=150)
+                                                         height=150, state="disabled")
         self.src_dst_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # ======================
-        #      IRREGULARITY
+        #      COULD BE ENCRYPTED
         # ======================
-        self.irregularity_label = customtkinter.CTkLabel(self, text="Irregularity", anchor="w",
+        self.irregularity_label = customtkinter.CTkLabel(self, text="Could be encrypted", anchor="w",
                                                          font=customtkinter.CTkFont(size=15, weight="bold"))
         self.irregularity_label.grid(row=4, column=1, padx=20, pady=(20, 10))
 
@@ -350,10 +356,8 @@ class App(customtkinter.CTk):
         # ======================
         #   set default values
         # ======================
-        self.load_entry.configure(state="readonly")
         self.time_slider.set(TIME_START)
         self.interface_combobox.set("Ethernet")
-        self.run_button.configure(state="disabled")
         self.appearance_mode_optionemenu.set("System")
         self.scaling_optionemenu.set("100%")
         self.description_textbox.insert("0.0", "Design and program an application that will detect "
@@ -372,14 +376,10 @@ class App(customtkinter.CTk):
                                                "network traffic scenarios and test the developed "
                                                "application on them.\n\n")
         self.description_textbox.configure(state="disabled")
-        self.packet_size_textbox1.insert("0.0", "Packet Size\n\n")
-        self.src_dst_textbox1.insert("0.0", "Source/Destination\n\n")
-        self.protocols_textbox2.insert("0.0", "Protocols\n\n")
-        self.packet_size_textbox2.insert("0.0", "Packet Size\n\n")
-        self.src_dst_textbox2.insert("0.0", "Source/Destination\n\n")
 
 
 if __name__ == "__main__":
     # pydoc.writedoc('GUI')
     app = App()
     app.mainloop()
+    # TODO: clear a folder with temp siles
