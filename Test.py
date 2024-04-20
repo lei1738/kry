@@ -10,3 +10,5 @@ if __name__ == "__main__":
     print(number_of_packets)
     percentage_of_packets_encrypted = number_of_encrypted_packets/number_of_packets * 100
     print(f"{percentage_of_packets_encrypted:.2f}%")
+    src_dst = src_dst_encrypted_packets(CSV_RELATIVE_FILEPATH)
+    print(src_dst)

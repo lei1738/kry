@@ -111,7 +111,7 @@ class App(customtkinter.CTk):
             convert_pcap_to_csv1(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
             protocols_count = count_protocols(CSV_RELATIVE_FILEPATH)
             self.write_protocols(protocols_count)
-            packet_counter = number_of_packets(CSV_RELATIVE_FILEPATH)
+            packet_counter = number_of_encrypted_packets(CSV_RELATIVE_FILEPATH)
             self.number_of_packets_entry1.configure(state="normal")
             self.number_of_packets_entry1.delete(0, "end")
             self.number_of_packets_entry1.insert(0, str(packet_counter))
@@ -227,12 +227,12 @@ class App(customtkinter.CTk):
 
         self.statistics_tableview.add("General")
         self.statistics_tableview.add("Protocols")
-        self.statistics_tableview.add("Packet Size")
+        self.statistics_tableview.add("Packets Size")
         self.statistics_tableview.add("Source/Destination")
 
         self.statistics_tableview.tab("General").grid_rowconfigure(2)
         self.statistics_tableview.tab("Protocols")
-        self.statistics_tableview.tab("Packet Size")
+        self.statistics_tableview.tab("Packets Size")
         self.statistics_tableview.tab("Source/Destination")
 
         self.percentage_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
@@ -243,7 +243,7 @@ class App(customtkinter.CTk):
         self.percentage_entry1.grid(row=0, column=1, padx=20, pady=(20, 10))
 
         self.number_of_packets_label1 = customtkinter.CTkLabel(self.statistics_tableview.tab("General"),
-                                                               text="Number of all packets:")
+                                                               text="Number of all VPN packets:")
         self.number_of_packets_label1.grid(row=1, column=0, padx=20, pady=(20, 10))
 
         self.number_of_packets_entry1 = customtkinter.CTkEntry(self.statistics_tableview.tab("General"), state="disabled")
@@ -253,7 +253,7 @@ class App(customtkinter.CTk):
                                                            height=150)
         self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
-        self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packet Size"), width=700,
+        self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=700,
                                                              height=150)
         self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 

@@ -1,9 +1,8 @@
 import os
 import sys
-
 import psutil
 import pyshark
-
+from collections import Counter
 import csv
 
 
@@ -119,6 +118,16 @@ def path_formatted(path):
 
 
 def convert_pcap_to_csv1(pcap_relative_path, csv_relative_path):
+    """
+    Converts a PCAP file to a CSV file using Tshark utility.
+
+    Args:
+        pcap_relative_path (str): The relative path to the input PCAP file.
+        csv_relative_path (str): The relative path to save the output CSV file.
+
+    Returns:
+        None
+    """
     cmd = "tshark -r " + pcap_relative_path + (" -T fields -e frame.time_relative -e frame.protocols -e ip.version "
                                                "-e _ws.col.Protocol -e ip.hdr_len -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
                                                "-e ip.flags.mf -e ip.ttl -e ip.proto -e ip.checksum -e ip.src -e ip.dst -e ip.len "
@@ -134,52 +143,130 @@ def convert_pcap_to_csv1(pcap_relative_path, csv_relative_path):
                                                "-e dhcp.hops -e dhcp.type -e rdp.negReq.selectedProtocol -e raw -e data -e text -E header=y -E separator=, -E occurrence=f > " + csv_relative_path)
     os.system(cmd)
 
+
 def count_protocols(csv_path):
+    """
+    Counts the occurrences of each protocol mentioned in a CSV file.
+
+    Args:
+        csv_path (str): The path to the input CSV file.
+
+    Returns:
+        dict: A dictionary containing the count of occurrences of each protocol.
+    """
     protocols_count = {}
 
-    # Otevření .csv souboru pro čtení
+    # Open the .csv file for reading
     with open(csv_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
 
-        # Přeskočení hlavičky
+        # Skip the header
         next(reader)
 
-        # Procházení řádků .csv souboru
+        # Iterate through the rows of the .csv file
         for row in reader:
             if row[-1] == '1':
-                # Získání použitého protokolu z daného řádku
+                # Get the protocol used from the current row
                 protocol = row[3]
 
-
-                # Zvýšení počtu výskytů daného protokolu
+                # Increase the count of the protocol occurrences
                 protocols_count[protocol] = protocols_count.get(protocol, 0) + 1
 
     return protocols_count
 
 
 def number_of_packets(csv_path):
+    """
+    Counts the total number of packets in a CSV file.
+
+    Args:
+        csv_path (str): The path to the input CSV file.
+
+    Returns:
+        int: The total number of packets in the CSV file.
+    """
     with open(csv_path, 'r', newline='') as csvfile:
-        packet_count = sum(1 for _ in csvfile)-1
+        packet_count = sum(1 for _ in csvfile) - 1
     return packet_count
 
+
 def number_of_encrypted_packets(csv_path):
+    """
+    Counts the number of encrypted packets in a CSV file.
+
+    Args:
+        csv_path (str): The path to the input CSV file.
+
+    Returns:
+        int: The number of encrypted packets in the CSV file.
+    """
     encrypted_packets_count = 0
 
-    # Otevření .csv souboru pro čtení
+    # Open the .csv file for reading
     with open(csv_path, 'r', newline='') as csvfile:
         reader = csv.reader(csvfile)
 
-        # Přeskočení hlavičky
+        # Skip the header
         next(reader)
 
-        # Procházení řádků .csv souboru
+        # Iterate through the rows of the .csv file
         for row in reader:
-            # Kontrola, zda je poslední hodnota v řádku rovna 1
+            # Check if the last value in the row is equal to 1
             if row[-1] == '1':
-                # Inkrementace počtu záznamů
+                # Increment the count
                 encrypted_packets_count += 1
 
     return encrypted_packets_count
 
 
+def src_dst_encrypted_packets(csv_path):
+    """
+    Extracts unique source-destination pairs of encrypted packets from a CSV file along with their counts.
 
+    Args:
+        csv_path (str): The path to the input CSV file.
+
+    Returns:
+        list: A list containing unique source-destination pairs of encrypted packets along with their counts.
+    """
+    src_dst = []
+
+    # Open the .csv file for reading
+    with open(csv_path, 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+
+        for row in reader:
+            # Check if the last value in the row is equal to 1
+            if row[-1] == '1':
+                # Increment the count
+                src = row[13]
+                dst = row[14]
+
+                src_dst1 = [src, dst]
+                src_dst.append(src_dst1)
+
+        src_dst_final = unique_with_count(src_dst)
+
+    return src_dst_final
+
+
+def unique_with_count(input_list):
+    """
+    Counts the occurrences of unique elements in a list and returns a list of unique elements with their counts.
+
+    Args:
+        input_list (list): The input list containing elements.
+
+    Returns:
+        list: A list containing unique elements along with their counts of occurrences.
+    """
+    # Convert inner lists to immutable tuples so they can be used as keys in Counter
+    input_list_tuples = [tuple(inner_list) for inner_list in input_list]
+
+    # Create a dictionary with the count of occurrences of each element
+    counts = Counter(input_list_tuples)
+
+    # Create a new list for unique elements with their count of occurrences
+    unique_list = [[list(item), counts[item]] for item in set(input_list_tuples)]
+
+    return unique_list
