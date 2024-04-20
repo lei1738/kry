@@ -41,15 +41,15 @@ def trainTest(csv_file):
     model.add(Dense(units=256, activation='relu'))
     model.add(Dense(units=1, activation='sigmoid'))
 
-    model.compile(loss=losses.BinaryCrossentropy(), optimizer=optimizers.SGD(), metrics=[metrics.BinaryAccuracy()])
+    model.compile(loss=losses.BinaryCrossentropy(), optimizer=optimizers.Adam(), metrics=[metrics.Accuracy()])
 
-    model.fit(X_train, y_train, epochs=200, batch_size=200)
+    model.fit(X_train, y_train, epochs=200, batch_size=50)
 
 
     y_predicted = model.predict(X_test)
 
     y_predicted = [0 if val < 0.5 else 1 for val in y_predicted]
-    print('{:.1%} procentni uspesnost natrenovaneho modelu.'.format(accuracy_score(y_test, y_predicted))) #return?
+    print('{:.5%} procentni uspesnost natrenovaneho modelu.'.format(accuracy_score(y_test, y_predicted))) #return?
 
     models.save_model(model,"tfmodel.h5")
 
