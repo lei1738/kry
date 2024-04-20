@@ -163,7 +163,7 @@ class App(customtkinter.CTk):
             save_file(pcap_file, get_root_folder() + '\\' + PCAP_RELATIVE_FILEPATH)
             convertPcapToCSV(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
             hashValues(CSV_RELATIVE_FILEPATH, CSV_HASHED_FILEPATH)
-            encrypted = evaluation(CSV_HASHED_FILEPATH, get_root_folder() + '\\tfmodel1.h5')
+            encrypted = predicts(CSV_HASHED_FILEPATH, get_root_folder() + '\\tfmodel1.h5')
             addColumn(CSV_RELATIVE_FILEPATH,'encrypted', encrypted)
             self.statistics()  # naplneni statistic
         else:
