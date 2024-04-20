@@ -19,10 +19,10 @@ def evaluation(our_csv, our_model):
         print('Sitovy provoz neprobehl pres VPN.')
     else:
         print('Sitovy provoz probehl pres VPN.')
-    print(y_predicted)
-    #add new column to our_csv - 2
+    # add new column to our_csv - 2
 
-    print(str(y_predicted.count(0)) + "- 0, " +  str(y_predicted.count(1)) + " - 1")
+    print(str(y_predicted.count(0)) + "- 0, " + str(y_predicted.count(1)) + " - 1")
+    return y_predicted
 
 def trainTest(csv_file):
     non_normalX = pd.read_csv(csv_file, nrows=1000000, usecols=[i for i in range(1,70)])

@@ -119,33 +119,6 @@ def path_formatted(path):
     return file_name
 
 
-def convert_pcap_to_csv1(pcap_relative_path, csv_relative_path):
-    """
-    Converts a PCAP file to a CSV file using Tshark utility.
-
-    Args:
-        pcap_relative_path (str): The relative path to the input PCAP file.
-        csv_relative_path (str): The relative path to save the output CSV file.
-
-    Returns:
-        None
-    """
-    cmd = "tshark -r " + pcap_relative_path + (" -T fields -e frame.time_relative -e frame.protocols -e ip.version "
-                                               "-e _ws.col.Protocol -e ip.hdr_len -e ip.id -e ip.flags -e ip.flags.rb -e ip.flags.df "
-                                               "-e ip.flags.mf -e ip.ttl -e ip.proto -e ip.checksum -e ip.src -e ip.dst -e ip.len "
-                                               "-e ipv6.src -e ipv6.dst -e tcp.analysis -e tcp.port -e tcp.srcport -e tcp.dstport -e tcp.seq -e tcp.ack "
-                                               "-e tcp.hdr_len -e tcp.flags -e tcp.flags.fin -e tcp.flags.syn -e tcp.flags.reset -e tcp.flags.push "
-                                               "-e tcp.flags.ack -e tcp.flags.urg -e tcp.flags.cwr -e tcp.window_size -e tcp.checksum "
-                                               "-e icmp.type -e icmpv6.code -e icmpv6.type -e udp.length -e udp.port -e icmp.code "
-                                               "-e icmp.type -e dns.flags -e dns.flags.recdesired -e dns.flags.recavail -e dns.flags.authenticated -e dns.qry.type "
-                                               "-e dns.qry.class -e dns.resp.type -e dns.resp.class -e dns.resp.ttl -e http.connection "
-                                               "-e http.request.method -e http.request.version -e http.request.uri -e http.response.version "
-                                               "-e http.response.code -e http.user_agent -e tls.handshake -e tls.handshake.type -e tls.handshake.version "
-                                               "-e tls.handshake.ciphersuites -e ssh.host_key.type -e ssh.host_sig.type -e ssh.packet_length -e ssh.protocol "
-                                               "-e dhcp.hops -e dhcp.type -e rdp.negReq.selectedProtocol -e raw -e data -e text -E header=y -E separator=, -E occurrence=f > " + csv_relative_path)
-    os.system(cmd)
-
-
 def count_protocols(csv_path):
     """
     Counts the occurrences of each protocol mentioned in a CSV file.
@@ -241,8 +214,12 @@ def src_dst_encrypted_packets(csv_path):
             # Check if the last value in the row is equal to 1
             if row[-1] == '1':
                 # Increment the count
-                src = row[13]
-                dst = row[14]
+                if row[13] == '' and row[14] == '':
+                    src = row[16]
+                    dst = row[17]
+                else:
+                    src = row[13]
+                    dst = row[14]
 
                 src_dst1 = [src, dst]
                 src_dst.append(src_dst1)
@@ -285,7 +262,10 @@ def encrypted_packet_size(csv_path):
             # Check if the last value in the row is equal to 1
             if row[-1] == '1':
                 # Increment the count
-                size = row[15]
+                if row[15] != '':
+                    size = row[15]
+                else:
+                    continue
 
                 packet_sizes1 = [size]
                 packet_sizes.append(packet_sizes1)
@@ -294,8 +274,23 @@ def encrypted_packet_size(csv_path):
 
     return packet_sizes_final
 
+#TODO: nefunguje, dodelat
+def remove_extra_char(lst):
+    new_lst = []
+    for item in lst:
+        if isinstance(item, list):
+            new_item = []
+            for sub_item in item:
+                if isinstance(sub_item, str):
+                    cleaned_sub_item = sub_item.replace('[', '').replace(']', '').replace('\'', '')
+                    new_item.append(cleaned_sub_item)
+                else:
+                    new_item.append(sub_item)
+            new_lst.append(new_item)
+        else:
+            new_lst.append(item)
+    return new_lst
 
-#TODO: implemntace "mohlo by byt sifrovano" - dle protokolu?
+# TODO: implemntace "mohlo by byt sifrovano" - dle protokolu?
 def could_be_encrypted(csv_path):
     pass
-

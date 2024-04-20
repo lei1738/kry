@@ -4,13 +4,16 @@ import customtkinter
 from tabulate import tabulate
 
 from Functions import *
+from functionsCSV import *
+from neuron import *
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
 FILEPATH = ""
-PCAP_RELATIVE_FILEPATH = 'temp\\' + 'temp.pcap'
-CSV_RELATIVE_FILEPATH = 'temp\\' + 'temp.csv'
+PCAP_RELATIVE_FILEPATH = 'pcap\\temp.pcap'
+CSV_RELATIVE_FILEPATH = 'csv\\temp.csv'
+CSV_HASHED_FILEPATH = 'csv\\hashed\\temp.csv'
 FILE_CONTENT = b''
 RUN_STATE = 0  # 0=Locked, 1=Loaded, 2=Record
 INTERFACES = []
@@ -122,8 +125,11 @@ class App(customtkinter.CTk):
 
     def statistics(self):
         # percentage of vpn packets
-        percentage_of_packets_encrypted = number_of_encrypted_packets / number_of_packets * 100
+        number_of_encr_packets = number_of_encrypted_packets(CSV_RELATIVE_FILEPATH)
+        number_of_pack = number_of_packets(CSV_RELATIVE_FILEPATH)
+        percentage_of_packets_encrypted = number_of_encr_packets/number_of_pack * 100
         self.percentage_entry1.configure(state="normal")
+        self.percentage_entry1.delete(0, "end")
         self.percentage_entry1.insert(0, f"{percentage_of_packets_encrypted:.2f}%")
         self.percentage_entry1.configure(state="disabled")
 
@@ -139,12 +145,12 @@ class App(customtkinter.CTk):
         self.write_table_protocols(protocols_count)
 
         # encrypted packets size + count
-        packet_size = encrypted_packet_size(CSV_RELATIVE_FILEPATH)
+        packet_size = remove_extra_char(encrypted_packet_size(CSV_RELATIVE_FILEPATH))
         self.write_table_packet_size(packet_size)
 
         # src/dst + count
         src_dst = src_dst_encrypted_packets(CSV_RELATIVE_FILEPATH)
-        print(src_dst)
+        self.write_table_src_dst(src_dst)
 
     def analyze(self):
         """
@@ -155,11 +161,11 @@ class App(customtkinter.CTk):
         if RUN_STATE == 1 or RUN_STATE == 2:  # load & record
             pcap_file = FILE_CONTENT
             save_file(pcap_file, get_root_folder() + '\\' + PCAP_RELATIVE_FILEPATH)
-            convert_pcap_to_csv1(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
-            # TODO: neuronka
-
-            self.statistics()  # naplnění statistic
-
+            convertPcapToCSV(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
+            hashValues(CSV_RELATIVE_FILEPATH, CSV_HASHED_FILEPATH)
+            encrypted = evaluation(CSV_HASHED_FILEPATH, get_root_folder() + '\\tfmodel1.h5')
+            addColumn(CSV_RELATIVE_FILEPATH,'encrypted', encrypted)
+            self.statistics()  # naplneni statistic
         else:
             return
 
