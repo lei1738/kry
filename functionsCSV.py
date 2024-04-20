@@ -5,12 +5,12 @@ from sklearn.utils import shuffle
 def shuffleCSV(csv_name,new_csv = ""):
     df = pd.read_csv(csv_name)
     df = shuffle(df)
-    df.to_csv(new_csv if new_csv != "" else "shuffled_output.csv", chunksize=50000)
+    df.to_csv(csv_name if new_csv == "" else new_csv, chunksize=50000)
 
 def deleteColumn(csv_name,column_name,new_csv = ""):
     df = pd.read_csv(csv_name)
     df.pop(column_name)
-    df.to_csv(new_csv if new_csv != "" else "deleted_output.csv", index=False)
+    df.to_csv(csv_name if new_csv == "" else new_csv, index=False)
 
 def addColumn(csv_name,column_name,new_csv=""):
     df = pd.read_csv(csv_name)
@@ -18,7 +18,7 @@ def addColumn(csv_name,column_name,new_csv=""):
     new_values = [1]*thislist
     df[column_name] = new_values
 
-    df.to_csv(new_csv if new_csv != "" else "added_output.csv", index=False)
+    df.to_csv(csv_name if new_csv == "" else new_csv, index=False)
 
 def hashValues(csv_name,new_csv = ""):
     df = pd.read_csv(csv_name)
@@ -28,7 +28,7 @@ def hashValues(csv_name,new_csv = ""):
         new_values = [hash(val) for val in thislist]
         df[l] = new_values
 
-    df.to_csv(new_csv if new_csv != "" else "hashed_output.csv", index=False)
+    df.to_csv(csv_name if new_csv == "" else new_csv, index=False)
 
 
 
