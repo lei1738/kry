@@ -1,63 +1,55 @@
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+from keras import models, losses, metrics, optimizers
+from tensorflow.keras.layers import Dense
+
+def evaluation(our_csv, our_model):
+    model = models.load_model(our_model)
+    #save our_csv - 2
+
+    #hash our_csv - 1
+    non_normalX = pd.read_csv(our_csv)
+    X_ev = (non_normalX - non_normalX.min()) / (non_normalX.max() - non_normalX.min())
+
+    y_predicted = model.predict(X_ev)
+    y_predicted = [0 if val < 0.5 else 1 for val in y_predicted]
+    if y_predicted.count(0) >= y_predicted.count(1):
+        print('Sitovy provoz neprobehl pres VPN.')
+    else:
+        print('Sitovy provoz probehl pres VPN.')
+    print(y_predicted)
+    #add new column to our_csv - 2
+
+    print(str(y_predicted.count(0)) + "- 0, " +  str(y_predicted.count(1)) + " - 1")
+
+def trainTest(csv_file):
+    non_normalX = pd.read_csv(csv_file, nrows=1000000, usecols=[i for i in range(1,70)])
+    X = (non_normalX - non_normalX.min()) / (non_normalX.max() - non_normalX.min())
+    y = pd.read_csv(csv_file, nrows=1000000, usecols=["encrypted"])
+
+    thislist = y["encrypted"].tolist()
+    new_values = [int(val) for val in thislist]
+    y["encrypted"] = new_values
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.8)
+
+    model = models.Sequential()
+
+    model.add(Dense(units=128, activation='relu', input_dim=69))
+    model.add(Dense(units=256, activation='relu'))
+    model.add(Dense(units=1, activation='sigmoid'))
+
+    model.compile(loss=losses.BinaryCrossentropy(), optimizer=optimizers.SGD(), metrics=[metrics.BinaryAccuracy()])
+
+    model.fit(X_train, y_train, epochs=200, batch_size=200)
 
 
-# define the model
-class PimaClassifier(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.hidden1 = nn.Linear(64, 12)
-        self.act1 = nn.ReLU()
-        self.hidden2 = nn.Linear(12, 64)
-        self.act2 = nn.ReLU()
-        self.output = nn.Linear(64, 1)
-        self.act_output = nn.Sigmoid()
+    y_predicted = model.predict(X_test)
 
-    def forward(self, x):
-        x = self.act1(self.hidden1(x))
-        x = self.act2(self.hidden2(x))
-        x = self.act_output(self.output(x))
-        return x
+    y_predicted = [0 if val < 0.5 else 1 for val in y_predicted]
+    print('{:.1%} procentni uspesnost natrenovaneho modelu.'.format(accuracy_score(y_test, y_predicted))) #return?
 
+    models.save_model(model,"tfmodel.h5")
 
-def neuronka(csv_file):
-    # load the dataset, split into input (X) and output (y) variables
-    dataset = np.loadtxt(csv_file, delimiter=',')
-    X = dataset[:, 0:64]
-    y = dataset[:, 64]
-
-    X = torch.tensor(X, dtype=torch.float32) #max 32b cisla
-    y = torch.tensor(y, dtype=torch.float32).reshape(-1, 1)
-
-    model = PimaClassifier()
-    print(model)
-
-    # train the model
-    loss_fn = nn.BCELoss()  # binary cross entropy
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
-
-    n_epochs = 100
-    batch_size = 10
-
-    for epoch in range(n_epochs):
-        for i in range(0, len(X), batch_size):
-            Xbatch = X[i:i + batch_size]
-            y_pred = model(Xbatch)
-            ybatch = y[i:i + batch_size]
-            loss = loss_fn(y_pred, ybatch)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-
-    # compute accuracy
-    y_pred = model(X)
-    accuracy = (y_pred.round() == y).float().mean()
-    print(f"Accuracy {accuracy}")
-
-    # make class predictions with the model
-
-    predictions = (model(X) > 0.5).int()
-    for i in range(5):
-        print('%s => %d (expected %d)' % (X[i].tolist(), predictions[i], y[i]))
