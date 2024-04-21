@@ -2,8 +2,8 @@
 
 ## Obsah:
   1. [Popis](#popis)
-  2. Instalace
-  3. Použití
+  2. [Instalace](#instalace)
+  3. [Použití](#pouziti)
 
 ## Popis
 Výsledkem projektu je natrénovaný model neuronové sítě, který vyhodnocuje, zda
