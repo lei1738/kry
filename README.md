@@ -35,48 +35,55 @@ zobrazeny v grafickém uživatelském rozhraní.
     Krok 3: Nainstalovat knihovny
   </summary>
   
-  • Pip - využívané k instalaci knihoven
+  • **Pip** - využívané k instalaci knihoven
   
         python get-pip.py
-  • Pyshark (v0.6) - využívané funkce jsou k zachycení síťové komunikace v pythonu
+  • **Pyshark (v0.6)** - využívané funkce jsou k zachycení síťové komunikace v pythonu
   
         pip install pyshark
-  • Scapy (v2.5.0) - z knihovny je využívaná funkce PcapReader pro čtení z pcap souboru
+  • **Scapy (v2.5.0)** - z knihovny je využívaná funkce PcapReader pro čtení z pcap souboru
 
         pip install scapy
-  • Pandas (v2.2.1) - funkce pro čtení a práci s csv soubory
+  • **Pandas (v2.2.1)** - funkce pro čtení a práci s csv soubory
 
         pip install pandas
-  • OS - funkce pro práci se systémovým adresářem a volání příkazů přes systémový terminál
+  • **OS** - funkce pro práci se systémovým adresářem a volání příkazů přes systémový terminál
       - automatickou součástí pythonu!
       
-  • Enum - knihovna pro použití výčtového datového typu
+  • **Enum** - knihovna pro použití výčtového datového typu
 
         pip install enum
-  • Tkinter - knihovna pro vytvoření GUI
+  • **Tkinter** - knihovna pro vytvoření GUI
       - automatickou součástí pythonu!
         
         pip install tk
-  • CustomTkinter (v5.2.2) - knihovna pro GUI
+  • **CustomTkinter (v5.2.2)** - knihovna pro GUI
 
         pip install customtkinter
-  • Tabulate (v0.9.0) - knihovna pro práci s tabulkami
+  • **Tabulate (v0.9.0)** - knihovna pro práci s tabulkami
 
         pip install tabulate
-  • Sklearn (v1.4.2) - knihovna pro strojové učení
+  • **Sklearn (v1.4.2)** - knihovna pro strojové učení
 
         pip install scikit-learn
-  • Keras (v3.2.1) - knihovna pro neuronové sítě
+  • **Keras (v3.2.1)** - knihovna pro neuronové sítě
+
+        pip install keras
+  • **TensorFlow (v2.16.1)** - knihovna pro vytváření modelů strojového učení
+
+        pip install tensorflow
+  • **Sys** - knihovna pro volání systémových funkcí
+        - automatickou součástí pythonu!
+        
+  • **Collections** - knihovna pro specializované kontejnerové datové typy
+        - automatickou součástí pythonu!
   
-  • TensorFlow (v2.16.1) - knihovna pro vytváření modelů strojového učení
+  • **Psutil (v5.9.8)** - knihovna pro zisk informací o probíhajících procesech a využití systému
   
-  • Sys - knihovna pro volání systémových funkcí
-  
-  • Collections - knihovna pro specializované kontejnerové datové typy
-  
-  • Psutil (v5.9.8) - knihovna pro zisk informací o probíhajících procesech a využití systému
-  
-  • Csv - knihovna pro čtení a zápis souborů ve formátu csv
+         pip install psutil 
+  • **Csv** - knihovna pro čtení a zápis souborů ve formátu csv
+        - automatickou součástí pythonu!
+        
 </details>
 <details>
   <summary>
