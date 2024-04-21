@@ -118,6 +118,13 @@ def path_formatted(path):
     file_name = path_parts[-1]
     return file_name
 
+def format_string(string, SIZE, char):
+    if len(string) > SIZE:
+        return string[:SIZE]
+    elif len(string) < SIZE:
+        return string + char * (SIZE - len(string))
+    else:
+        return string
 
 def count_protocols(csv_path):
     """
@@ -143,7 +150,7 @@ def count_protocols(csv_path):
             if row[-1] == '1':
                 # Get the protocol used from the current row
                 protocol = row[3]
-
+                protocol = protocol + "\t-"
                 # Increase the count of the protocol occurrences
                 protocols_count[protocol] = protocols_count.get(protocol, 0) + 1
 
@@ -227,8 +234,23 @@ def src_dst_encrypted_packets(csv_path):
                 src_dst.append(src_dst1)
 
         src_dst_final = unique_with_count(src_dst)
+        src_dst_final = format_src_dst(src_dst_final, False)
 
     return src_dst_final
+
+
+def format_src_dst(src_dst_arr, divide): # Divide column Src_Dst into two columns
+    arr = []
+    for row in src_dst_arr:
+        src = row[0][0]
+        dst = row[0][1]
+        count = row[1]
+        if divide:
+            count_src_dst = [count,src,dst]
+        else:
+            count_src_dst = [f"{count}\t-", f"{src}   -   {dst}"]
+        arr.append(count_src_dst)
+    return arr
 
 
 def unique_with_count(input_list):
@@ -266,6 +288,7 @@ def encrypted_packet_size(csv_path):
                 # Increment the count
                 if row[15] != '':
                     size = row[15]
+                    print(f"size={size}")
                 else:
                     continue
 
@@ -273,25 +296,24 @@ def encrypted_packet_size(csv_path):
                 packet_sizes.append(packet_sizes1)
 
         packet_sizes_final = unique_with_count(packet_sizes)
+        packet_sizes_final = fix_packet_size_arr(packet_sizes_final)
 
     return packet_sizes_final
 
-#TODO: nefunguje, dodelat
-def remove_extra_char(lst):
-    new_lst = []
-    for item in lst:
-        if isinstance(item, list):
-            new_item = []
-            for sub_item in item:
-                if isinstance(sub_item, str):
-                    cleaned_sub_item = sub_item.replace('[', '').replace(']', '').replace('\'', '')
-                    new_item.append(cleaned_sub_item)
-                else:
-                    new_item.append(sub_item)
-            new_lst.append(new_item)
-        else:
-            new_lst.append(item)
-    return new_lst
+def fix_packet_size_arr(packet_size_arr):
+    arr1 = []
+    for row in packet_size_arr:
+        size = row[0][0]
+        size = trim_decimals(str(size)) + "\t-"
+        count = row[1]
+        new_row = [size, count]
+        arr1.append(new_row)
+    return arr1
+
+def trim_decimals(s):
+    if s.endswith(".0"):
+        return s[:-2]
+    return s
 
 # TODO: implemntace "mohlo by byt sifrovano" - dle protokolu?
 def could_be_encrypted(csv_path):

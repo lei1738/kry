@@ -71,8 +71,8 @@ class App(customtkinter.CTk):
             FILEPATH = new_filepath
             FILE_CONTENT = file
             self.update_entry_state()
-            self.run_button.configure(state="normal")
-            self.run_button.configure(text="Analyze Loaded")
+            self.analyze_button.configure(state="normal")
+            self.analyze_button.configure(text="Analyze Loaded")
             RUN_STATE = 1
 
     def record_file(self):
@@ -83,8 +83,8 @@ class App(customtkinter.CTk):
         interface_name = self.interface_combobox.get()
         run_time = self.time_slider.get()  # float
         capture_size, FILE_CONTENT = capture_packets(interface_name, run_time)
-        self.run_button.configure(state="normal")
-        self.run_button.configure(text="Analyze Recorded")
+        self.analyze_button.configure(state="normal")
+        self.analyze_button.configure(text="Analyze Recorded")
         RUN_STATE = 2
 
     def write_table_protocols(self, protocols_count):
@@ -99,7 +99,7 @@ class App(customtkinter.CTk):
         """
         protocols = list(protocols_count.items())
         protocols_table = tabulate(protocols, headers=["Protocol", "Occurrence"], tablefmt="plain",
-                                   numalign="right")
+                                   numalign="left")
         print(protocols_table)
         self.protocols_textbox1.configure(state="normal")
         self.protocols_textbox1.delete("0.0", "end")
@@ -107,8 +107,8 @@ class App(customtkinter.CTk):
         self.protocols_textbox1.configure(state="disabled")
 
     def write_table_packet_size(self, packet_sizes):
-        packets_table = tabulate(packet_sizes, headers=["Packet size", "Occurrence"], tablefmt="plain",
-                                 numalign="right")
+        packets_table = tabulate(packet_sizes, headers=["Packet size [B]", "Occurrence"], tablefmt="plain",
+                                 numalign="left", stralign="left")
         print(packets_table)
         self.packet_size_textbox1.configure(state="normal")
         self.packet_size_textbox1.delete("0.0", "end")
@@ -116,7 +116,7 @@ class App(customtkinter.CTk):
         self.packet_size_textbox1.configure(state="disabled")
 
     def write_table_src_dst(self, src_dst):
-        src_dst_table = tabulate(src_dst, headers=["Src & Dst", "Occurrence"], tablefmt="plain", numalign="right")
+        src_dst_table = tabulate(src_dst, headers=["Occurrence", "Src & Dst"], tablefmt="plain", numalign="left")
         print(src_dst_table)
         self.src_dst_textbox1.configure(state="normal")
         self.src_dst_textbox1.delete("0.0", "end")
@@ -145,7 +145,7 @@ class App(customtkinter.CTk):
         self.write_table_protocols(protocols_count)
 
         # encrypted packets size + count
-        packet_size = remove_extra_char(encrypted_packet_size(CSV_RELATIVE_FILEPATH))
+        packet_size = encrypted_packet_size(CSV_RELATIVE_FILEPATH)
         self.write_table_packet_size(packet_size)
 
         # src/dst + count
@@ -163,7 +163,7 @@ class App(customtkinter.CTk):
             save_file(pcap_file, get_root_folder() + '\\' + PCAP_RELATIVE_FILEPATH)
             convertPcapToCSV(PCAP_RELATIVE_FILEPATH, CSV_RELATIVE_FILEPATH)
             hashValues(CSV_RELATIVE_FILEPATH, CSV_HASHED_FILEPATH)
-            encrypted = predicts(CSV_HASHED_FILEPATH, get_root_folder() + '\\tfmodel1.h5')
+            encrypted = predicts(CSV_HASHED_FILEPATH, get_root_folder() + '\\tfmodel.h5')
             addColumn(CSV_RELATIVE_FILEPATH,'encrypted', encrypted)
             self.statistics()  # naplneni statistic
         else:
@@ -235,8 +235,8 @@ class App(customtkinter.CTk):
         # ======================
         #    main run button
         # ======================
-        self.run_button = customtkinter.CTkButton(self.sidebar_frame, text="Analyze", state="disabled", command=self.analyze)
-        self.run_button.grid(row=7, column=0, padx=20, pady=10)
+        self.analyze_button = customtkinter.CTkButton(self.sidebar_frame, text="Analyze", state="disabled", command=self.analyze)
+        self.analyze_button.grid(row=7, column=0, padx=20, pady=10)
 
         # ======================
         #      APPEARANCE
