@@ -197,7 +197,6 @@ class App(customtkinter.CTk):
         :return:
             None
         """
-        # TODO: prepsat i dokumentaci
         global FILE_CONTENT
         if RUN_STATE == 1 or RUN_STATE == 2:  # load & record
             pcap_file = FILE_CONTENT
@@ -390,4 +389,3 @@ if __name__ == "__main__":
     # pydoc.writedoc('GUI')
     app = App()
     app.mainloop()
-    # TODO: clear a folder with temp siles
