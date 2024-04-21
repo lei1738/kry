@@ -128,14 +128,11 @@ zobrazeny v grafickém uživatelském rozhraní.
   rozbalovacím seznamu si může uživatel vybrat síťové rozhraní na jeho zařízení
   a níže, pomocí posuvníku, si zvolit čas zachytávání. Tyto volby poté potvrdí
   tlačítkem Record Traffic.
-  3. Sekce 3 obsahuje pouze tlačítko Analyze, které má na starost spuštění ana-
-  lýzy. Pokud nebyl nahrán soubor ani zachycen provoz, tak je toto tlačítko
-  zamknuté. Poté se odemkne a změní své jméno dle volby uživatele (ať už na-
-  hrát soubor či zachytit provoz). V akci tlačítka Analyze probíhá i převedení
+  3. Sekce 3 obsahuje pouze tlačítko Analyze, které má na starost spuštění analýzy. Pokud nebyl nahrán soubor ani zachycen provoz, tak je toto tlačítko
+  zamknuté. Poté se odemkne a změní své jméno dle volby uživatele (ať už nahrát soubor či zachytit provoz). V akci tlačítka Analyze probíhá i převedení
   souboru .pcap na .csv, zahashování obsahu souboru na čísla a následné předání
   neuronové síti k analýze provozu.
-  4. Sekce 4 slouží k výpisu výsledků analýzy. Zahrnuje to procentuální část zašif-
-  rovaných paketů oproti celku, počet zašifrovaných paketů, použité protokoly,
+  4. Sekce 4 slouží k výpisu výsledků analýzy. Zahrnuje to procentuální část zašifrovaných paketů oproti celku, počet zašifrovaných paketů, použité protokoly,
   velikost jednotlivých paketů, zdrojové a cílové adresy a jejich početní výskyty.
   5. V sekci 5 se nachází pouze volba vzhledu okna. Na výběr je systémový mód,
   světlý mód a tmavý mód. Dále je k dispozici škálování uživatelského rozhraní, a to od 80 % do 120 %.
