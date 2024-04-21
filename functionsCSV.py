@@ -1,16 +1,18 @@
 import os
+
 import pandas as pd
 from sklearn.utils import shuffle
+
 
 def shuffleCSV(csv_name, new_csv=""):
     """
     Shuffles the rows of a CSV file.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file to shuffle.
         new_csv (str, optional): Path to the new shuffled CSV file.
 
-    Returns:
+    :return:
         None
     """
     df = pd.read_csv(csv_name)
@@ -22,12 +24,12 @@ def deleteColumn(csv_name, column_name, new_csv=""):
     """
     Deletes a column from a CSV file.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file.
         column_name (str): Path to the column to delete.
         new_csv (str, optional): Path to the new CSV file.
 
-    Returns:
+    :return:
         None
     """
     df = pd.read_csv(csv_name)
@@ -39,13 +41,13 @@ def addColumn(csv_name, column_name, values, new_csv=""):
     """
     Adds a new column with specified values to a CSV file.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file.
         column_name (str): Path to the new column.
         values (list): The values to be added in the new column.
         new_csv (str, optional): Path to the new CSV file.
 
-    Returns:
+    :return:
         None
     """
     df = pd.read_csv(csv_name)
@@ -57,11 +59,11 @@ def hashValues(csv_name, new_csv=""):
     """
     Hashes the values of all columns in a CSV file.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file.
         new_csv (str, optional): Path to the new CSV file.
 
-    Returns:
+    :return:
         None
     """
     df = pd.read_csv(csv_name)
@@ -78,10 +80,10 @@ def merge(directory):
     """
     Merges multiple CSV files in a directory into a single CSV file.
 
-    Args:
+    :param:
         directory (str): The directory containing CSV files to merge.
 
-    Returns:
+    :return:
         None
     """
     CHUNK_SIZE = 50000
@@ -105,11 +107,11 @@ def convertPcapToCSV(pcap_file, csv_name):
     """
     Converts a PCAP file to a CSV file using tshark.
 
-    Args:
+    :param:
         pcap_file (str): Path to the PCAP file.
         csv_name (str): Path to the resulting CSV file.
 
-    Returns:
+    :return:
         None
     """
     cmd = "tshark -r " + pcap_file + (" -T fields -e frame.time_relative -e frame.protocols -e ip.version "
@@ -132,11 +134,11 @@ def renamePcapToCSV(csv_name, directory):
     """
     Renames a CSV file in a directory.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file.
         directory (str): The directory containing the CSV file.
 
-    Returns:
+    :return:
         None
     """
     original = directory + "\\" + csv_name
@@ -149,11 +151,11 @@ def addEncrypted(csv_name, vpn):
     """
     Adds a new column 'encrypted' to a CSV file indicating VPN usage.
 
-    Args:
+    :param:
         csv_name (str): Path to the CSV file.
         vpn (bool): True if VPN was used, False otherwise.
 
-    Returns:
+    :return:
         None
     """
     df = pd.read_csv(csv_name)
