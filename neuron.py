@@ -8,8 +8,8 @@ from tensorflow.keras.layers import Dense
 def predicts(our_csv, our_model):
     model = models.load_model(our_model)
 
-    non_normalX = pd.read_csv(our_csv)
-    X_ev = (non_normalX - non_normalX.min()) / (non_normalX.max() - non_normalX.min())
+    x = pd.read_csv(our_csv)
+    X_ev = (x - x.min()) / (x.max() - x.min())
 
     y_predicted = model.predict(X_ev)
     y_predicted = [0 if val < 0.5 else 1 for val in y_predicted]
@@ -36,10 +36,11 @@ def trainTestEvaluate(csv_file):
 
     model.compile(loss=losses.BinaryCrossentropy(), optimizer=optimizers.Adam(), metrics=[metrics.Accuracy()])
 
-    model.fit(X_train, y_train, epochs=200, batch_size=50)
+    model.fit(X_train, y_train, epochs=500, batch_size=50)
     results = model.evaluate(X_test, y_test, batch_size=50)
 
-    print('{:.4%} uspesnost natrenovaneho modelu.'.format(results[1]))
+    print('{:.4%} presnost natrenovaneho modelu.'.format(results[1]))
 
-    models.save_model(model,"tfmodel.h5")
+    print('{:.13%} ztratovost natrenovaneho modelu.'.format(results[0]))
 
+    models.save_model(model,"tfmodel2.h5")
