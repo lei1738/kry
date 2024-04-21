@@ -6,6 +6,16 @@ from tensorflow.keras.layers import Dense
 
 
 def predicts(our_csv, our_model):
+    """
+    Performs prediction based on a trained neural network model.
+
+    Args:
+        our_csv (str): Path to the CSV file containing the data for predictions.
+        our_model (str): Path to the file where the trained neural network model is stored.
+
+    Returns:
+        list: A list of predicted values (0 or 1) based on the input data.
+    """
     model = models.load_model(our_model)
 
     x = pd.read_csv(our_csv)
@@ -18,8 +28,17 @@ def predicts(our_csv, our_model):
     return y_predicted
 
 def trainTestEvaluate(csv_file):
-    non_normalX = pd.read_csv(csv_file, nrows=1000000, usecols=[i for i in range(1,70)])
-    X = (non_normalX - non_normalX.min()) / (non_normalX.max() - non_normalX.min())
+    """
+    Trains and evaluates the performance of a neural network model.
+
+    Args:
+        csv_file (str): Path to the CSV file containing the training data.
+
+    Returns:
+        None
+    """
+    x = pd.read_csv(csv_file, nrows=1000000, usecols=[i for i in range(1,70)])
+    X = (x - x.min()) / (x.max() - x.min())
     y = pd.read_csv(csv_file, nrows=1000000, usecols=["encrypted"])
 
     thislist = y["encrypted"].tolist()
