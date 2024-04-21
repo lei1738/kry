@@ -45,19 +45,27 @@ zobrazeny v grafickém uživatelském rozhraní.
 
         pip install scapy
   • Pandas (v2.2.1) - funkce pro čtení a práci s csv soubory
-  
+
+        pip install pandas
   • OS - funkce pro práci se systémovým adresářem a volání příkazů přes systémový terminál
-  
+      - automatickou součástí pythonu!
+      
   • Enum - knihovna pro použití výčtového datového typu
-  
+
+        pip install enum
   • Tkinter - knihovna pro vytvoření GUI
-  
+      - automatickou součástí pythonu!
+        
+        pip install tk
   • CustomTkinter (v5.2.2) - knihovna pro GUI
-  
+
+        pip install customtkinter
   • Tabulate (v0.9.0) - knihovna pro práci s tabulkami
-  
+
+        pip install tabulate
   • Sklearn (v1.4.2) - knihovna pro strojové učení
-  
+
+        pip install scikit-learn
   • Keras (v3.2.1) - knihovna pro neuronové sítě
   
   • TensorFlow (v2.16.1) - knihovna pro vytváření modelů strojového učení
