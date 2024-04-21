@@ -3,13 +3,16 @@ from tkinter import filedialog
 import customtkinter
 from tabulate import tabulate
 
-from Functions import *
 from functionsCSV import *
+from functionsGUI import *
 from neuron import *
 
 customtkinter.set_appearance_mode("System")
 customtkinter.set_default_color_theme("blue")
 
+# ======================
+#      GLOBAL VAR
+# ======================
 FILEPATH = ""
 PCAP_RELATIVE_FILEPATH = 'pcap\\temp.pcap'
 CSV_RELATIVE_FILEPATH = 'csv\\temp.csv'
@@ -30,8 +33,11 @@ class App(customtkinter.CTk):
         """
         Change the appearance mode of the application.
 
-        Args:
+        :param:
             new_appearance_mode (str): The new appearance mode to set.
+
+        :return:
+            None
         """
         customtkinter.set_appearance_mode(new_appearance_mode)
 
@@ -39,8 +45,11 @@ class App(customtkinter.CTk):
         """
         Change the scaling of widgets in the application.
 
-        Args:
+        :param:
             new_scaling (str): The new scaling percentage to set.
+
+        :return:
+            None
         """
         new_scaling_float = int(new_scaling.replace("%", "")) / 100
         customtkinter.set_widget_scaling(new_scaling_float)
@@ -48,6 +57,9 @@ class App(customtkinter.CTk):
     def update_entry_state(self):
         """
         Updates the state and content of the load entry widget after inserting path to a file.
+
+        :return:
+            None
         """
         global FILEPATH
         if FILEPATH != '':
@@ -60,6 +72,8 @@ class App(customtkinter.CTk):
         """
         Loads a file, updates the GUI Run button state, and prepares for running.
 
+        :return:
+            None
         """
         global FILEPATH
         global FILE_CONTENT
@@ -78,6 +92,9 @@ class App(customtkinter.CTk):
     def record_file(self):
         """
         Records packets from the specified interface for a given time duration.
+
+        :return:
+            None
         """
         global RUN_STATE, FILE_CONTENT
         interface_name = self.interface_combobox.get()
@@ -91,39 +108,60 @@ class App(customtkinter.CTk):
         """
         Writes the protocols and their occurrences to a textbox.
 
-        Args:
+        :param:
             protocols_count (dict): A dictionary containing the count of occurrences of each protocol.
 
-        Returns:
+        :return:
             None
         """
         protocols = list(protocols_count.items())
         protocols_table = tabulate(protocols, headers=["Protocol", "\tOccurrence"], tablefmt="plain",
                                    numalign="left")
-        print(protocols_table)
         self.protocols_textbox1.configure(state="normal")
         self.protocols_textbox1.delete("0.0", "end")
         self.protocols_textbox1.insert("0.0", protocols_table)
         self.protocols_textbox1.configure(state="disabled")
 
     def write_table_packet_size(self, packet_sizes):
+        """
+            Writes the protocols and their occurrences to a textbox.
+
+            :param:
+                protocols_count (dict): A dictionary containing the count of occurrences of each protocol.
+
+            :return:
+                None
+        """
         packets_table = tabulate(packet_sizes, headers=["Packet size [B]", "Occurrence"], tablefmt="plain",
                                  numalign="left", stralign="left")
-        print(packets_table)
         self.packet_size_textbox1.configure(state="normal")
         self.packet_size_textbox1.delete("0.0", "end")
         self.packet_size_textbox1.insert("0.0", packets_table)
         self.packet_size_textbox1.configure(state="disabled")
 
     def write_table_src_dst(self, src_dst):
+        """
+            Writes the source-destination pairs and their occurrences to a textbox.
+
+            :param:
+                src_dst (list): A list containing unique source-destination pairs of encrypted packets along with their counts.
+
+            :return:
+                None
+        """
         src_dst_table = tabulate(src_dst, headers=["Occurrence", "\t\t\tSrc & Dst"], tablefmt="plain", numalign="left")
-        print(src_dst_table)
         self.src_dst_textbox1.configure(state="normal")
         self.src_dst_textbox1.delete("0.0", "end")
         self.src_dst_textbox1.insert("0.0", src_dst_table)
         self.src_dst_textbox1.configure(state="disabled")
 
     def statistics(self):
+        """
+            Generates and displays various statistics related to encrypted packets in the user interface.
+
+            :return:
+                None
+        """
         # percentage of vpn packets
         number_of_encr_packets = number_of_encrypted_packets(CSV_RELATIVE_FILEPATH)
         number_of_pack = number_of_packets(CSV_RELATIVE_FILEPATH)
@@ -155,6 +193,9 @@ class App(customtkinter.CTk):
     def analyze(self):
         """
         Performs an action based on the selected traffic (loaded/recorded).
+
+        :return:
+            None
         """
         # TODO: prepsat i dokumentaci
         global FILE_CONTENT
@@ -173,8 +214,11 @@ class App(customtkinter.CTk):
         """
         Updates the time label text with the specified value from the slider.
 
-        Args:
+        :param:
             value (int): The value to display on the label.
+
+        :return:
+            None
         """
         self.time_label.configure(text=(str(value) + " s"))
 
