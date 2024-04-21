@@ -23,7 +23,7 @@ zobrazeny v grafickém uživatelském rozhraní.
   <summary>
     Krok 1: Stáhnout projekt
   </summary>
-  - Z GitHubu/místa odevzdání projektu na školních stránkách
+  - Z GitHubu / Místa odevzdání projektu na školních stránkách
 </details>
 <details>
   <summary>
@@ -88,14 +88,23 @@ zobrazeny v grafickém uživatelském rozhraní.
 </details>
 <details>
   <summary>
-    Krok 4: Nainstalovat Pycharm
+    Krok 4: Nainstalovat PyCharm
   </summary>
-    - Stáhnout Pycharm: https://www.jetbrains.com/pycharm/
+    - Stáhnout PyCharm: https://www.jetbrains.com/pycharm/
 </details>
 <details>
   <summary>
     Krok 4: Nastavení statické kryptografické soli
   </summary>
+    - V programu PyCharm je třeba nastavit proměnou prostředí. Nastavení najdeme v pravé části okna vedle stratovacího tlačítka (viz. 1. obrázek). Dále klikneme na "Edit Configuration", které otevře nové okno s více nastaveními. U souboru GUI.py (vybereme v levem slloupci) nastavíme v poli "Enviromental variables" (viz. 2. obrázek níže) následující řetězec:
+  
+      PYTHONHASHSEED=0; PYTHONUNBUFFERED=1
+      
+  Může být třeba restartovat program PyCharm pro projevení změny.
+  ![image](https://github.com/lei1738/kry/assets/138430747/6e8eb298-e6de-4cbb-be32-7fa1ffacd503)
+  
+  ![image](https://github.com/lei1738/kry/assets/138430747/8812e65b-d745-47c1-b684-16270a7acc50)
+
 </details>
 <details>
   <summary>
