@@ -98,7 +98,7 @@ class App(customtkinter.CTk):
             None
         """
         protocols = list(protocols_count.items())
-        protocols_table = tabulate(protocols, headers=["Protocol", "Occurrence"], tablefmt="plain",
+        protocols_table = tabulate(protocols, headers=["Protocol", "\tOccurrence"], tablefmt="plain",
                                    numalign="left")
         print(protocols_table)
         self.protocols_textbox1.configure(state="normal")
@@ -116,7 +116,7 @@ class App(customtkinter.CTk):
         self.packet_size_textbox1.configure(state="disabled")
 
     def write_table_src_dst(self, src_dst):
-        src_dst_table = tabulate(src_dst, headers=["Occurrence", "Src & Dst"], tablefmt="plain", numalign="left")
+        src_dst_table = tabulate(src_dst, headers=["Occurrence", "\t\t\tSrc & Dst"], tablefmt="plain", numalign="left")
         print(src_dst_table)
         self.src_dst_textbox1.configure(state="normal")
         self.src_dst_textbox1.delete("0.0", "end")
@@ -188,7 +188,7 @@ class App(customtkinter.CTk):
         #    configure window
         # ======================
         self.title("Encrypted Traffic Analysis")
-        self.geometry(f"{1200}x{800}")
+        self.geometry(f"{1200}x{600}")
         INTERFACES = get_interfaces()
 
         # ======================
@@ -271,7 +271,7 @@ class App(customtkinter.CTk):
                                                        font=customtkinter.CTkFont(size=15, weight="bold"))
         self.statistics_label.grid(row=2, column=1, padx=20, pady=(20, 10))
 
-        self.statistics_tableview = customtkinter.CTkTabview(self, width=250, height=550)
+        self.statistics_tableview = customtkinter.CTkTabview(self, width=250, height=400)
         self.statistics_tableview.grid(row=3, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.statistics_tableview.add("General")
@@ -300,15 +300,15 @@ class App(customtkinter.CTk):
         self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
         self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=750,
-                                                           height=450, state="disabled")
+                                                           height=300, state="disabled")
         self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=750,
-                                                             height=450, state="disabled")
+                                                             height=300, state="disabled")
         self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=750,
-                                                         height=450, state="disabled")
+                                                         height=300, state="disabled")
         self.src_dst_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # ======================
