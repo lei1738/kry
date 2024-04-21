@@ -115,4 +115,29 @@ zobrazeny v grafickém uživatelském rozhraní.
   ![image](https://github.com/lei1738/kry/assets/138430747/403ee99d-9427-4c24-8e16-c7a52534e4ee)
 </details>
 
+
 ## Použití
+<img width="902" alt="GUI" src="https://github.com/lei1738/kry/assets/138430747/9d5bdac3-7e77-49b0-80e3-8fe3426f1461">
+
+  1. Sekce 1 má za cíl umožnit načtení souboru pro analýzu (Obrázek 3.5). Tato
+  část obsahuje tlačítko Load Traffic a textové pole, které není editovatelné. Po
+  stisknutí tlačítka se zobrazí dialogové okno, které umožňuje vyhledání a výběr
+  souboru s formátem .pcap k načtení. Po úspěšném načtení se název souboru
+  zobrazí v textovém poli pro snadnější identifikaci.
+  2. Sekce 2 má za úkol zachytit provoz na zvoleném rozhraní po zvolenou dobu. V
+  rozbalovacím seznamu si může uživatel vybrat síťové rozhraní na jeho zařízení
+  a níže, pomocí posuvníku, si zvolit čas zachytávání. Tyto volby poté potvrdí
+  tlačítkem Record Traffic.
+  3. Sekce 3 obsahuje pouze tlačítko Analyze, které má na starost spuštění ana-
+  lýzy. Pokud nebyl nahrán soubor ani zachycen provoz, tak je toto tlačítko
+  zamknuté. Poté se odemkne a změní své jméno dle volby uživatele (ať už na-
+  hrát soubor či zachytit provoz). V akci tlačítka Analyze probíhá i převedení
+  souboru .pcap na .csv, zahashování obsahu souboru na čísla a následné předání
+  neuronové síti k analýze provozu.
+  4. Sekce 4 slouží k výpisu výsledků analýzy. Zahrnuje to procentuální část zašif-
+  rovaných paketů oproti celku, počet zašifrovaných paketů, použité protokoly,
+  velikost jednotlivých paketů, zdrojové a cílové adresy a jejich početní výskyty.
+  5. V sekci 5 se nachází pouze volba vzhledu okna. Na výběr je systémový mód,
+  světlý mód a tmavý mód. Dále je k dispozici škálování uživatelského rozhraní, a to od 80 % do 120 %.
+  6. Sekce 6 obsahuje pouze popis aplikace.
+
