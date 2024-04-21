@@ -23,12 +23,13 @@ zobrazeny v grafickém uživatelském rozhraní.
   <summary>
     Krok 1: Stáhnout projekt
   </summary>
+  - Z GitHubu/místa odevzdání projektu na školních stránkách
 </details>
 <details>
   <summary>
     Krok 2: Nainstalovat python
   </summary>
-  Stáhnout python v3.12: https://www.python.org/downloads/
+   - Stáhnout python v3.12: https://www.python.org/downloads/
 </details>
 <details>
   <summary>
@@ -89,10 +90,17 @@ zobrazeny v grafickém uživatelském rozhraní.
   <summary>
     Krok 4: Nainstalovat Pycharm
   </summary>
+    - Stáhnout Pycharm: https://www.jetbrains.com/pycharm/
+</details>
+<details>
+  <summary>
+    Krok 4: Nastavení statické kryptografické soli
+  </summary>
 </details>
 <details>
   <summary>
     Krok 5: Spustit GUI.py
+    - 
   </summary>
 </details>
 
