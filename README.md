@@ -138,3 +138,5 @@ zobrazeny v grafickém uživatelském rozhraní.
   světlý mód a tmavý mód. Dále je k dispozici škálování uživatelského rozhraní, a to od 80 % do 120 %.
   6. Sekce 6 obsahuje pouze popis aplikace.
 
+  - Je možné otestovat funkčnosti projektu na přiložených souborech ve složce pcap. Konkrétně jde o soubory: gmail_encrypted_traffic.pcap (pouze šifrovaná komunikace), test.pcap (smížená komunikace), test1.pcap (smížená komunikace), test2.pcap (smížená komunikace).
+
