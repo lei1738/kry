@@ -109,8 +109,10 @@ zobrazeny v grafickém uživatelském rozhraní.
 <details>
   <summary>
     Krok 5: Spustit GUI.py
-    - 
   </summary>
+    - Kliknutím pravým tlačítkem na soubor "GUI.py" se zobrazí nabídka akcí, vybereme možnost "Run GUI".
+    
+  ![image](https://github.com/lei1738/kry/assets/138430747/403ee99d-9427-4c24-8e16-c7a52534e4ee)
 </details>
 
 ## Použití
