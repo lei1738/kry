@@ -19,5 +19,66 @@ zobrazeny v grafickém uživatelském rozhraní.
 <img width="902" alt="GUI_design" src="https://github.com/lei1738/kry/assets/138430747/71866360-4709-4cc8-b08d-0e52e2681940">
 
 ## Instalace
+<details>
+  <summary>
+    Krok 1: Stáhnout projekt
+  </summary>
+</details>
+<details>
+  <summary>
+    Krok 2: Nainstalovat python
+  </summary>
+  Stáhnout python v3.12: https://www.python.org/downloads/
+</details>
+<details>
+  <summary>
+    Krok 3: Nainstalovat knihovny
+  </summary>
+  
+  • Pip - využívané k instalaci knihoven
+  
+        python get-pip.py
+  • Pyshark (v0.6) - využívané funkce jsou k zachycení síťové komunikace v pythonu
+  
+        pip install pyshark
+  • Scapy (v2.5.0) - z knihovny je využívaná funkce PcapReader pro čtení z pcap souboru
+
+        pip install scapy
+  • Pandas (v2.2.1) - funkce pro čtení a práci s csv soubory
+  
+  • OS - funkce pro práci se systémovým adresářem a volání příkazů přes systémový terminál
+  
+  • Enum - knihovna pro použití výčtového datového typu
+  
+  • Tkinter - knihovna pro vytvoření GUI
+  
+  • CustomTkinter (v5.2.2) - knihovna pro GUI
+  
+  • Tabulate (v0.9.0) - knihovna pro práci s tabulkami
+  
+  • Sklearn (v1.4.2) - knihovna pro strojové učení
+  
+  • Keras (v3.2.1) - knihovna pro neuronové sítě
+  
+  • TensorFlow (v2.16.1) - knihovna pro vytváření modelů strojového učení
+  
+  • Sys - knihovna pro volání systémových funkcí
+  
+  • Collections - knihovna pro specializované kontejnerové datové typy
+  
+  • Psutil (v5.9.8) - knihovna pro zisk informací o probíhajících procesech a využití systému
+  
+  • Csv - knihovna pro čtení a zápis souborů ve formátu csv
+</details>
+<details>
+  <summary>
+    Krok 4: Nainstalovat Pycharm
+  </summary>
+</details>
+<details>
+  <summary>
+    Krok 5: Spustit GUI.py
+  </summary>
+</details>
 
 ## Použití
