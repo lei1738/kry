@@ -271,7 +271,7 @@ class App(customtkinter.CTk):
                                                        font=customtkinter.CTkFont(size=15, weight="bold"))
         self.statistics_label.grid(row=2, column=1, padx=20, pady=(20, 10))
 
-        self.statistics_tableview = customtkinter.CTkTabview(self, width=250, height=400)
+        self.statistics_tableview = customtkinter.CTkTabview(self, width=250, height=380)
         self.statistics_tableview.grid(row=3, column=1, padx=(20, 0), pady=(20, 0), sticky="nsew")
 
         self.statistics_tableview.add("General")
@@ -300,15 +300,15 @@ class App(customtkinter.CTk):
         self.number_of_packets_entry1.grid(row=1, column=1, padx=20, pady=(20, 10))
 
         self.protocols_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Protocols"), width=750,
-                                                           height=300, state="disabled")
+                                                           height=280, state="disabled")
         self.protocols_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.packet_size_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Packets Size"), width=750,
-                                                             height=300, state="disabled")
+                                                             height=280, state="disabled")
         self.packet_size_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         self.src_dst_textbox1 = customtkinter.CTkTextbox(self.statistics_tableview.tab("Source/Destination"), width=750,
-                                                         height=300, state="disabled")
+                                                         height=280, state="disabled")
         self.src_dst_textbox1.grid(row=0, column=0, padx=20, pady=(20, 10))
 
         # ======================
@@ -336,13 +336,7 @@ class App(customtkinter.CTk):
                                                "application will produce clear statistics on the "
                                                "protocol used, origin/destination, size of encrypted "
                                                "packets, and total amount of encrypted data on the "
-                                               "network. The application will also detect packets on the "
-                                               "network that could be encrypted from a security "
-                                               "perspective but are not. The application will build a "
-                                               "picture of the normal traffic on the network and detect "
-                                               "any deviations that occur (change in encrypted packet "
-                                               "size, total amount of encrypted data, protocols, "
-                                               "source/destination addresses, etc.). Simulate different "
+                                               "network. Simulate different "
                                                "network traffic scenarios and test the developed "
                                                "application on them.\n\n")
         self.description_textbox.configure(state="disabled")
