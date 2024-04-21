@@ -94,7 +94,7 @@ zobrazeny v grafickém uživatelském rozhraní.
 </details>
 <details>
   <summary>
-    Krok 4: Nastavení statické kryptografické soli
+    Krok 5: Nastavení statické kryptografické soli
   </summary>
     - V programu PyCharm je třeba nastavit proměnou prostředí. Nastavení najdeme v pravé části okna vedle stratovacího tlačítka (viz. 1. obrázek). Dále klikneme na "Edit Configuration", které otevře nové okno s více nastaveními. U souboru GUI.py (vybereme v levem slloupci) nastavíme v poli "Enviromental variables" (viz. 2. obrázek níže) následující řetězec:
   
@@ -108,7 +108,7 @@ zobrazeny v grafickém uživatelském rozhraní.
 </details>
 <details>
   <summary>
-    Krok 5: Spustit GUI.py
+    Krok 6: Spustit GUI.py
   </summary>
     - Kliknutím pravým tlačítkem na soubor "GUI.py" se zobrazí nabídka akcí, vybereme možnost "Run GUI".
     
